@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "772568415536",
+    "project_id": "neighbourhub-39fa4",
+    "storage_bucket": "neighbourhub-39fa4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772568415536:android:7b862c71ed80759608dcf5",
+        "android_client_info": {
+          "package_name": "com.example.neighbourhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "772568415536-6c19h54m1ljp3qiqf93e32todj4udehi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXQek93Px7xvS3CfztY_51fvDOr6M6CRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "772568415536-6c19h54m1ljp3qiqf93e32todj4udehi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

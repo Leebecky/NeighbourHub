@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeighbourHub.iml" filepath="$PROJECT_DIR$/.idea/modules/NeighbourHub.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/NeighbourHub.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/NeighbourHub.app.iml" />
     </modules>
   </component>
 </project>
