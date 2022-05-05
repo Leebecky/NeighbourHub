@@ -72,3 +72,4 @@ obj/
 .externalNativeBuild
 *.lock
 *.bin
+/.gradle/
