@@ -26,7 +26,7 @@ import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.viewmodel.LoginViewModel
 
 @Composable
-fun Login(vm: LoginViewModel = viewModel()) {
+fun Login(vm: LoginViewModel = viewModel(), toRegistration: () -> Unit) {
     var showPassword by remember { mutableStateOf(false) }
 //    Surface(color = MaterialTheme.colors.background)
 //     {
@@ -77,8 +77,9 @@ fun Login(vm: LoginViewModel = viewModel()) {
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .padding(top = 30.dp)
-                .clickable { Log.println(Log.INFO, "Test", "Send to registration") })
-//        ToDo Implement Navigation
+                .clickable {
+                    toRegistration()
+                })
     }
 }
 //}
