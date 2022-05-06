@@ -61,8 +61,6 @@ output.json
 obj/
 .externalNativeBuild
 
-*.iml
-.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
@@ -72,4 +70,3 @@ obj/
 .externalNativeBuild
 *.lock
 *.bin
-/.gradle/
