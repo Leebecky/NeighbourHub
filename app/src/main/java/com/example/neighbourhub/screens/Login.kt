@@ -24,10 +24,12 @@ import com.example.neighbourhub.R
 import com.example.neighbourhub.ui.widgets.CustomButton
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun Login(vm: LoginViewModel = viewModel()) {
+fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome: () -> Unit) {
     var showPassword by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 //    Surface(color = MaterialTheme.colors.background)
 //     {
     Column(
@@ -44,7 +46,7 @@ fun Login(vm: LoginViewModel = viewModel()) {
         )
         Spacer(Modifier.height(50.dp))
         CustomOutlinedTextField(
-            placeholder = "Email",
+            labelText = "Email",
             textValue = vm.email,
             onValueChangeFun = { vm.email = it },
             modifier = Modifier.padding(top = 8.dp),
@@ -69,16 +71,28 @@ fun Login(vm: LoginViewModel = viewModel()) {
         Spacer(Modifier.height(30.dp))
         CustomButton(
             btnText = "Login",
-            onClickFun = { vm.login() },
+            onClickFun = {
+                scope.launch {
+                    val data = vm.logInWithEmail()
+
+                    if (data != null) { // Navigate to Home page
+                        navHome()
+                    } else { //TODO: Display Error Message
+                        Log.println(Log.INFO, "Test", "Login Failed")
+                    }
+                }
+            },
             modifier = Modifier.padding(top = 24.dp)
         )
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = "No account? Click here to register!",
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
-                .padding(top = 30.dp)
-                .clickable { Log.println(Log.INFO, "Test", "Send to registration") })
-//        ToDo Implement Navigation
+                .padding(bottom = 24.dp)
+                .clickable {
+                    navRegistration()
+                })
     }
 }
 //}

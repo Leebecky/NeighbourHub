@@ -6,24 +6,37 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.neighbourhub.screens.Home
 import com.example.neighbourhub.screens.Login
+import com.example.neighbourhub.screens.Registration
+import com.example.neighbourhub.screens.UserProfile
+import com.example.neighbourhub.screens.setup.RaCreation
+import com.example.neighbourhub.screens.setup.RaInvitation
+import com.example.neighbourhub.screens.setup.UserWelcome
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
+import com.example.neighbourhub.utils.NavigationRoutes
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NeighbourHubTheme (darkTheme = false){
+            NeighbourHubTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                   Login()
+                    val currentUser = FirebaseAuth.getInstance().currentUser;
+                    NavigationController(currentUser)
                 }
             }
         }
@@ -31,14 +44,57 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+fun NavigationController(currentUser: FirebaseUser?) {
+    val startScreen: String =
+        if (currentUser == null) NavigationRoutes.Login else NavigationRoutes.SetupRaInvitation
+    val navController = rememberNavController()
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NeighbourHubTheme {
-        Greeting("Android")
+    NavHost(navController = navController, startDestination = startScreen) {
+
+        // Login Route
+        composable(route = NavigationRoutes.Login) {
+            Login(
+                navRegistration = { navController.navigate(NavigationRoutes.Registration) },
+                navHome = { navController.navigate(NavigationRoutes.SetupWelcome) }
+            )
+        }
+
+        // Registration Route
+        composable(route = NavigationRoutes.Registration) {
+            Registration(
+                navBack = { navController.navigateUp() },
+                navHome = { navController.navigate(NavigationRoutes.Home) }
+            )
+        }
+
+        // Home Route
+        composable(route = NavigationRoutes.Home) {
+            //temp while home is still setting up
+            Home(navBack = { navController.navigate(NavigationRoutes.Login) })
+            // Home(navBack = { navController.navigateUp() })
+        }
+
+        // Setup/Welcome Route
+        composable(route = NavigationRoutes.SetupWelcome) {
+            UserWelcome(navInvitation = { navController.navigate(NavigationRoutes.SetupRaInvitation) })
+        }
+
+        // Setup/RaInvitation Route
+        composable(route = NavigationRoutes.SetupRaInvitation) {
+            RaInvitation(
+                navProfile = { navController.navigate(NavigationRoutes.UserProfile) },
+                navRaCreation = { navController.navigate(NavigationRoutes.RaCreation) })
+        }
+
+        // User Profile Route
+        composable(route = NavigationRoutes.UserProfile) {
+            UserProfile()
+        }
+
+        // RaCreation Route
+        composable(route = NavigationRoutes.RaCreation) {
+            RaCreation( navBack = { navController.navigateUp() })
+        }
     }
 }
+

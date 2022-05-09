@@ -1,46 +1,47 @@
 package com.example.neighbourhub.ui.widgets
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 
 @Composable
 fun CustomOutlinedTextField(
-    placeholder: String,
+    labelText: String,
     textValue: String,
     onValueChangeFun: (String) -> Unit,
     modifier: Modifier = Modifier,
     isSingleLine: Boolean = false,
+    trailingIcon: @Composable ()-> Unit = {},
 ) {
     OutlinedTextField(
         value = textValue,
         onValueChange = onValueChangeFun,
-        label = { Text(text = placeholder) },
+        label = { Text(text = labelText) },
         singleLine = isSingleLine,
-        modifier = modifier
+        modifier = modifier,
+        trailingIcon = trailingIcon
     )
 }
 
 @Composable
 fun CustomTextField(
-    placeholder: String,
+    labelText: String,
     textValue: String,
     onValueChangeFun: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    isSingleLine:Boolean = false
+    isSingleLine: Boolean = false,
+    trailingIcon: @Composable ()-> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     TextField(
         value = textValue,
         onValueChange = onValueChangeFun,
-        label = { Text(text = placeholder) },
+        label = { Text(text = labelText) },
         singleLine = isSingleLine,
+        trailingIcon = trailingIcon,
         modifier = modifier
     )
 }
