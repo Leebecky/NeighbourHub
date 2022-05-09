@@ -3,6 +3,7 @@ package com.example.neighbourhub.ui.widgets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme

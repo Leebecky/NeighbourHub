@@ -17,9 +17,9 @@ import com.example.neighbourhub.ui.widgets.CustomButton
 @Composable
 fun UserWelcome(navInvitation: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.primary) {
-        Column(modifier = Modifier.padding(top = 30.dp)) {
-            Text(text = "Welcome to", style = MaterialTheme.typography.h1)
-            Text(text = "NeighbourHub", style = MaterialTheme.typography.h2)
+        Column(modifier = Modifier.padding(top = 30.dp, start = 8.dp)) {
+            Text(text = "Welcome \nto", style = MaterialTheme.typography.h2)
+            Text(text = "Neighbour\nHub", style = MaterialTheme.typography.h2)
             Spacer(Modifier.weight(1f))
             CustomButton(
                 btnText = "Continue",

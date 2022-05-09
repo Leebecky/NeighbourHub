@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
@@ -25,25 +23,22 @@ import com.example.neighbourhub.R
 import com.example.neighbourhub.ui.widgets.CustomButton
 import com.example.neighbourhub.ui.widgets.CustomIconButton
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
+import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
 import com.example.neighbourhub.viewmodel.RegistrationViewModel
 import kotlinx.coroutines.launch
 
 // Registration Page
 @Composable
-fun Registration(navBack: () -> Unit, navHome:()->Unit, vm: RegistrationViewModel = viewModel()) {
+fun Registration(
+    navBack: () -> Unit,
+    navHome: () -> Unit,
+    vm: RegistrationViewModel = viewModel()
+) {
     var showPassword by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Register") },
-                navigationIcon = {
-                    CustomIconButton(
-                        onClickFun = navBack,
-                        icon = Icons.Filled.ArrowBack
-                    )
-                }
-            )
+            CustomTopAppBar_Back("Register", navBack = navBack)
         }
     ) {
         Column(

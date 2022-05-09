@@ -28,4 +28,5 @@ class RegistrationViewModel() : ViewModel() {
             null
         }
     }
+
 }

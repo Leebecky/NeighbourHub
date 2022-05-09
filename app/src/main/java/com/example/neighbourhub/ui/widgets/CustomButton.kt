@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -26,24 +27,44 @@ fun CustomButton(
 ) {
     Button(
         onClick = onClickFun,
-       shape = RoundedCornerShape(50.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = btnColor, contentColor = btnTextColor),
+        shape = RoundedCornerShape(50.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = btnColor,
+            contentColor = btnTextColor
+        ),
         modifier = modifier
             .width(150.dp)
             .height(50.dp),
 
-    ) {
+        ) {
         Text(btnText, fontSize = 20.sp)
     }
 }
 
 @Composable
-fun CustomIconButton(onClickFun: () -> Unit, icon: ImageVector, btnDescription:String = ""){
+fun CustomIconButton(onClickFun: () -> Unit, icon: ImageVector, btnDescription: String = "") {
     IconButton(onClick = onClickFun) {
         Icon(
             imageVector = icon,
             contentDescription = btnDescription
         )
+    }
+}
+
+@Composable
+fun CustomTextButton(
+    btnText: String,
+    onClickFun: () -> Unit,
+    fontSize: TextUnit = MaterialTheme.typography.button.fontSize,
+    modifier: Modifier = Modifier,
+    btnColor: Color = MaterialTheme.colors.primary,
+    btnTextColor: Color = MaterialTheme.colors.onPrimary,
+) {
+    TextButton(
+        onClick = onClickFun,
+        modifier = modifier
+    ) {
+        Text(btnText, fontSize = fontSize, color = btnTextColor)
     }
 }
 

@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.neighbourhub.screens.Home
 import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.screens.Registration
+import com.example.neighbourhub.screens.UserProfile
+import com.example.neighbourhub.screens.setup.RaCreation
 import com.example.neighbourhub.screens.setup.RaInvitation
 import com.example.neighbourhub.screens.setup.UserWelcome
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationController(currentUser: FirebaseUser?) {
     val startScreen: String =
-        if (currentUser == null) NavigationRoutes.Login else NavigationRoutes.Home
+        if (currentUser == null) NavigationRoutes.Login else NavigationRoutes.SetupRaInvitation
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = startScreen) {
@@ -53,7 +55,7 @@ fun NavigationController(currentUser: FirebaseUser?) {
         composable(route = NavigationRoutes.Login) {
             Login(
                 navRegistration = { navController.navigate(NavigationRoutes.Registration) },
-                navHome = { navController.navigate(NavigationRoutes.Home) }
+                navHome = { navController.navigate(NavigationRoutes.SetupWelcome) }
             )
         }
 
@@ -67,7 +69,9 @@ fun NavigationController(currentUser: FirebaseUser?) {
 
         // Home Route
         composable(route = NavigationRoutes.Home) {
-            Home(navBack = { navController.navigateUp() })
+            //temp while home is still setting up
+            Home(navBack = { navController.navigate(NavigationRoutes.Login) })
+            // Home(navBack = { navController.navigateUp() })
         }
 
         // Setup/Welcome Route
@@ -77,9 +81,20 @@ fun NavigationController(currentUser: FirebaseUser?) {
 
         // Setup/RaInvitation Route
         composable(route = NavigationRoutes.SetupRaInvitation) {
-            RaInvitation(navProfile = { navController.navigate(NavigationRoutes.UserProfile) })
+            RaInvitation(
+                navProfile = { navController.navigate(NavigationRoutes.UserProfile) },
+                navRaCreation = { navController.navigate(NavigationRoutes.RaCreation) })
         }
 
+        // User Profile Route
+        composable(route = NavigationRoutes.UserProfile) {
+            UserProfile()
+        }
+
+        // RaCreation Route
+        composable(route = NavigationRoutes.RaCreation) {
+            RaCreation( navBack = { navController.navigateUp() })
+        }
     }
 }
 

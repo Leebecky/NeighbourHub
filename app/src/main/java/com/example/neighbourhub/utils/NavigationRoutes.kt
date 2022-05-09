@@ -7,4 +7,5 @@ object NavigationRoutes {
     const val SetupWelcome = "setup/welcome"
     const val SetupRaInvitation = "setup/rainvitation"
     const val UserProfile = "profile"
+    const val RaCreation = "reg_ra"
 }
