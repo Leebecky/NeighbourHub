@@ -35,8 +35,7 @@ fun CustomButton(
         modifier = modifier
             .width(150.dp)
             .height(50.dp),
-
-        ) {
+    ) {
         Text(btnText, fontSize = 20.sp)
     }
 }
@@ -65,6 +64,35 @@ fun CustomTextButton(
         modifier = modifier
     ) {
         Text(btnText, fontSize = fontSize, color = btnTextColor)
+    }
+}
+
+@Composable
+fun CustomButtonLoader(
+    btnText: String,
+    onClickFun: () -> Unit,
+    showLoader: Boolean,
+    modifier: Modifier = Modifier,
+    btnColor: Color = MaterialTheme.colors.primary,
+    btnTextColor: Color = MaterialTheme.colors.onPrimary,
+    fontSize: TextUnit = 20.sp,
+) {
+    TextButton(
+        onClick = onClickFun,
+        shape = RoundedCornerShape(50.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = btnColor,
+            contentColor = btnTextColor
+        ),
+        modifier = modifier
+            .width(150.dp)
+            .height(50.dp),
+    ) {
+        if (showLoader) {
+            CircularProgressIndicator(color = Color.White)
+        } else {
+            Text(text = btnText, fontSize = fontSize)
+        }
     }
 }
 

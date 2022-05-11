@@ -9,6 +9,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.neighbourhub.MainActivity
+import com.example.neighbourhub.models.Users
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -23,7 +25,7 @@ class LoginViewModel() : ViewModel() {
     // Variables
     var email by mutableStateOf("")
     var password by mutableStateOf("")
-    
+
     suspend fun logInWithEmail(): AuthResult? {
         return try {
             val data = Firebase.auth
@@ -34,4 +36,10 @@ class LoginViewModel() : ViewModel() {
             null
         }
     }
+
+//    suspend fun updateCurrentUser(userId:String){
+//        val currentUser: Users? = Users.getCurrentUser(userId)
+//        MainActivity().myUser = currentUser
+//    }
+
 }

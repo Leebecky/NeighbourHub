@@ -4,7 +4,10 @@ import android.os.Parcelable
 import android.util.Log
 import com.example.neighbourhub.utils.DatabaseCollection
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
 import java.lang.Exception
 
@@ -18,8 +21,19 @@ data class ResidentAssociation(
     var householdList: List<Household> = emptyList()
 ) : Parcelable {
     companion object {
+
         //Retrieve the RA collection from Firestore
-        private val firestore = FirebaseFirestore.getInstance().collection(DatabaseCollection.RA)
+        private val firestore = Firebase.firestore.collection(DatabaseCollection.RA)
+
+        // Find the RA based on Invitation Code
+        suspend fun findRaByInvitationCode(invCode: String): ResidentAssociation? {
+            val data = firestore.whereEqualTo("invitationCode", invCode).get().await()
+            return if (data.count() > 0) {
+                data.documents[0].toObject<ResidentAssociation>()
+            } else {
+                null
+            }
+        }
 
         // Create/Update the corresponding record
         fun updateResidentAssociation(data: ResidentAssociation): Boolean {

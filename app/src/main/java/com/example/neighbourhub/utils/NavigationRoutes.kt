@@ -8,4 +8,10 @@ object NavigationRoutes {
     const val SetupRaInvitation = "setup/rainvitation"
     const val UserProfile = "profile"
     const val RaCreation = "reg_ra"
+    const val Bulletin = "bulletin"
+    const val Chatroom = "chatroom"
+    const val Phonebook = "phonebook"
+    const val Menu = "menu"
+    const val VisitorReg = "visitor_registration"
+    const val Marketplace = "marketplace"
 }

@@ -76,6 +76,7 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
                     val data = vm.logInWithEmail()
 
                     if (data != null) { // Navigate to Home page
+//                        data.user?.let { vm.updateCurrentUser(it.uid) }
                         navHome()
                     } else { //TODO: Display Error Message
                         Log.println(Log.INFO, "Test", "Login Failed")
