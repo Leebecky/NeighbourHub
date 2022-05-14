@@ -91,27 +91,27 @@ fun UserProfile(
 
             CustomOutlinedTextField( // Residential Area
                 labelText = "Residential Area",
-                textValue = currentUser?.address?.residentialArea ?: "",
+                textValue = vm.residentialArea,
                 onValueChangeFun = { }, isEnabled = false
             )
 
             CustomOutlinedTextField( // Postcode
                 labelText = "Postcode",
-                textValue = currentUser?.address?.postcode ?: "",
+                textValue = vm.postcode,
                 onValueChangeFun = { }, isEnabled = false
             )
 
             CustomOutlinedTextField( // State
                 labelText = "State",
-                textValue = currentUser?.address?.state ?: "",
+                textValue = vm.state,
                 onValueChangeFun = { }, isEnabled = false
             )
-
 
             CustomButtonLoader(btnText = "Save", onClickFun = {
                 scope.launch {
                     loaderState = true
-                    val status = vm.updateProfile(currentUser)
+                    val status = vm.updateProfile()
+                    //TODO: Add error dialog
                     loaderState = false
                 }
             }, showLoader = loaderState, modifier = Modifier.padding(top = 30.dp))

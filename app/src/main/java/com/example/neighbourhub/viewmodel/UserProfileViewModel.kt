@@ -19,6 +19,11 @@ class UserProfileViewModel() : ViewModel() {
     var houseNo by mutableStateOf("")
     var street by mutableStateOf("")
 
+    // Static values retrieved from db
+    var residentialArea: String = ""
+    var state: String = ""
+    var postcode: String = ""
+
     fun init(currentUser: Users?) {
         if (currentUser != null) {
             name = currentUser.name
@@ -26,21 +31,28 @@ class UserProfileViewModel() : ViewModel() {
             age = currentUser.age.toString()
             houseNo = currentUser.address.houseNumber
             street = currentUser.address.street
+
+            residentialArea = currentUser.address.residentialArea
+            state = currentUser.address.state
+            postcode = currentUser.address.postcode
+
         }
     }
 
-    suspend fun updateProfile(currentUser: Users?): Boolean {
-        if (currentUser != null) {
+
+    suspend fun updateProfile(): Boolean {
+        val currentUser = Users.currentUserId?.let { Users.getCurrentUser(it) }
+
+        return if (currentUser != null) {
             currentUser.name = name
             currentUser.age = age.toInt()
             currentUser.contactNumber = contactNumber
             currentUser.address.houseNumber = houseNo
             currentUser.address.street = street
-
-            return Users.updateUserProfile(currentUser)
-
+            Users.updateUserProfile(currentUser)
         } else {
-            return false
+            false
         }
+
     }
 }

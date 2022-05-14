@@ -24,17 +24,17 @@ data class Bulletin(
         private val firestore = Firebase.firestore.collection(DatabaseCollection.BULLETIN)
 
         // Retrieve bulletin list
-        suspend fun getBulletinList(): List<Bulletin>? {
+        suspend fun getBulletinList(): List<Bulletin> {
             return try {
                 val data = firestore.get().await()
                 if (!data.isEmpty) {
                     data.toObjects()
                 } else {
-                    null
+                   emptyList()
                 }
             } catch (ex: Exception) {
                 Log.println(Log.INFO, "Test", ex.message.orEmpty())
-                null
+                emptyList()
             }
         }
 

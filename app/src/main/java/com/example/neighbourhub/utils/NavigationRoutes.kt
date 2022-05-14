@@ -9,6 +9,7 @@ object NavigationRoutes {
     const val UserProfile = "profile"
     const val RaCreation = "reg_ra"
     const val Bulletin = "bulletin"
+    const val BulletinCreation = "bulletin_create"
     const val Chatroom = "chatroom"
     const val Phonebook = "phonebook"
     const val Menu = "menu"

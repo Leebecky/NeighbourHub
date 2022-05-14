@@ -22,6 +22,7 @@ import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.screens.Registration
 import com.example.neighbourhub.screens.UserProfile
 import com.example.neighbourhub.screens.residents.*
+import com.example.neighbourhub.screens.residents.bulletin.BulletinCreation
 import com.example.neighbourhub.screens.setup.RaCreation
 import com.example.neighbourhub.screens.setup.RaInvitation
 import com.example.neighbourhub.screens.setup.UserWelcome
@@ -81,7 +82,9 @@ fun NavigationController(currentUser: FirebaseUser?) {
 //            val backStackEntry by navController.currentBackStackEntryAsState()
 //            var currentRoute = backStackEntry?.destination?.route
 //            currentRoute = currentRoute ?: ""
-            Home(navBack = {navController.navigateUp()})
+            Home(
+                navBack = { navController.navigateUp() },
+                navBulletinCreation = { navController.navigate(NavigationRoutes.BulletinCreation) })
         }
 
         // Setup/Welcome Route
@@ -114,10 +117,10 @@ fun NavigationController(currentUser: FirebaseUser?) {
             Menu()
         }
 
-//        // Bulletin Board Route
-//        composable(route = NavigationRoutes.Bulletin) {
-//            BulletinBoard()
-//        }
+        // Bulletin Board Creation Route
+        composable(route = NavigationRoutes.BulletinCreation) {
+            BulletinCreation(navBack = { navController.navigateUp() })
+        }
 
         // Chatroom Route
         composable(route = NavigationRoutes.Chatroom) {

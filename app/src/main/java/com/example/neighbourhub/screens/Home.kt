@@ -3,31 +3,19 @@ package com.example.neighbourhub.screens
 import android.content.res.Configuration
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.screens.residents.BulletinBoard
+import com.example.neighbourhub.screens.residents.bulletin.BulletinBoard
 import com.example.neighbourhub.screens.residents.Chatroom
 import com.example.neighbourhub.screens.residents.Marketplace
 import com.example.neighbourhub.screens.residents.Menu
-import com.example.neighbourhub.screens.residents.bulletin.BulletinCreation
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.utils.NavigationRoutes
 import com.example.neighbourhub.viewmodel.HomeViewModel
 
 @Composable
-fun Home(navBack: () -> Unit, vm: HomeViewModel = viewModel()) {
+fun Home(navBack: () -> Unit, navBulletinCreation:()->Unit, vm: HomeViewModel = viewModel()) {
     var currentRoute by remember { mutableStateOf(NavigationRoutes.Bulletin) }
-    // Retrieving logged in user data
-    var currentUser: Users? = null
-    val
-    LaunchedEffect(key1 = Unit) {
-        currentUser = Users.currentUserId?.let { Users.getCurrentUser(it) }
-    }
 
     Scaffold(
         topBar = {
@@ -47,7 +35,7 @@ fun Home(navBack: () -> Unit, vm: HomeViewModel = viewModel()) {
                         label = { Text(item.title) },
                         selected = currentRoute == item.route,
                         onClick = { currentRoute = item.route },
-                        selectedContentColor = MaterialTheme.colors.primaryVariant,
+                        selectedContentColor = MaterialTheme.colors.secondary,
                         unselectedContentColor = MaterialTheme.colors.onPrimary
 
                     )
@@ -55,12 +43,12 @@ fun Home(navBack: () -> Unit, vm: HomeViewModel = viewModel()) {
             }
 
         },
-        content = {
+        content = { padding ->
             when (currentRoute) {
                 NavigationRoutes.Chatroom -> Chatroom()
                 NavigationRoutes.Marketplace -> Marketplace()
-                NavigationRoutes.Bulletin -> BulletinCreation(navBack = navBack, user = currentUser)
-//                NavigationRoutes.Bulletin -> BulletinBoard(currentUser)
+//                NavigationRoutes.Bulletin -> BulletinCreation(navBack = navBack)
+                NavigationRoutes.Bulletin -> BulletinBoard(padding = padding, navCreation = navBulletinCreation)
                 NavigationRoutes.Menu -> Menu()
             }
 
@@ -79,7 +67,7 @@ fun Home(navBack: () -> Unit, vm: HomeViewModel = viewModel()) {
 fun HomePreview() {
     NeighbourHubTheme {
         Surface {
-            Home({}, HomeViewModel())
+            Home({}, {}, HomeViewModel())
         }
     }
 }
