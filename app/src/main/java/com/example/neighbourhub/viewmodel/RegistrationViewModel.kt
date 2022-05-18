@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.neighbourhub.models.Users
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -18,7 +19,7 @@ class RegistrationViewModel() : ViewModel() {
     var email by mutableStateOf("")
     var password by mutableStateOf("")
 
-    suspend fun registerUser(): AuthResult? {
+    suspend fun createUser(): AuthResult? {
         return try {
             val data = Firebase.auth
                 .createUserWithEmailAndPassword(email, password)
@@ -27,6 +28,14 @@ class RegistrationViewModel() : ViewModel() {
         } catch (e: Exception) {
             null
         }
+    }
+
+    suspend fun registerUser(): AuthResult? {
+        val auth = createUser()
+        if (auth != null) {
+            auth.user?.let { Users.registerUser(it.uid, it.email.orEmpty()) }
+        }
+        return auth
     }
 
 }

@@ -116,6 +116,7 @@ fun RaCreation(vm: RaCreationViewModel = viewModel(), navBack: () -> Unit) {
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Preview")
 @Composable
@@ -125,4 +126,4 @@ fun RaCreationPreview() {
             RaCreation(RaCreationViewModel(), navBack = {})
         }
     }
-}
+}*/

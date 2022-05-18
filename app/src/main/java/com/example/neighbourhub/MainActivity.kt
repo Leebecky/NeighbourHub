@@ -8,14 +8,22 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavOptions
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.screens.Home
 import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.screens.Registration
 import com.example.neighbourhub.screens.UserProfile
+import com.example.neighbourhub.screens.residents.Chatroom
+import com.example.neighbourhub.screens.residents.Marketplace
+import com.example.neighbourhub.screens.residents.Phonebook
+import com.example.neighbourhub.screens.residents.VisitorRegistration
+import com.example.neighbourhub.screens.residents.bulletin.BulletinCreation
 import com.example.neighbourhub.screens.setup.RaCreation
 import com.example.neighbourhub.screens.setup.RaInvitation
 import com.example.neighbourhub.screens.setup.UserWelcome
@@ -23,19 +31,21 @@ import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.utils.NavigationRoutes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NeighbourHubTheme(darkTheme = false) {
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val currentUser = FirebaseAuth.getInstance().currentUser;
+                    val currentUser = FirebaseAuth.getInstance().currentUser
+
                     NavigationController(currentUser)
                 }
             }
@@ -46,7 +56,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationController(currentUser: FirebaseUser?) {
     val startScreen: String =
-        if (currentUser == null) NavigationRoutes.Login else NavigationRoutes.SetupRaInvitation
+        if (currentUser == null) NavigationRoutes.Login else NavigationRoutes.Home
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = startScreen) {
@@ -55,23 +65,38 @@ fun NavigationController(currentUser: FirebaseUser?) {
         composable(route = NavigationRoutes.Login) {
             Login(
                 navRegistration = { navController.navigate(NavigationRoutes.Registration) },
-                navHome = { navController.navigate(NavigationRoutes.SetupWelcome) }
-            )
+                navHome = {
+                    navController.navigate(NavigationRoutes.Home) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                })
         }
 
         // Registration Route
         composable(route = NavigationRoutes.Registration) {
             Registration(
                 navBack = { navController.navigateUp() },
-                navHome = { navController.navigate(NavigationRoutes.Home) }
+                navHome = { navController.navigate(NavigationRoutes.SetupWelcome) }
             )
         }
 
         // Home Route
         composable(route = NavigationRoutes.Home) {
-            //temp while home is still setting up
-            Home(navBack = { navController.navigate(NavigationRoutes.Login) })
-            // Home(navBack = { navController.navigateUp() })
+
+            Home(
+                navBack = { navController.navigateUp() }, //Back function
+                navOut = { //Logout
+                    navController.navigate(NavigationRoutes.Login) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                //Bulletin board navi
+                navBulletinCreation = { navController.navigate("${NavigationRoutes.BulletinCreation}/$it") },
+            navController = navController)
         }
 
         // Setup/Welcome Route
@@ -86,15 +111,93 @@ fun NavigationController(currentUser: FirebaseUser?) {
                 navRaCreation = { navController.navigate(NavigationRoutes.RaCreation) })
         }
 
-        // User Profile Route
-        composable(route = NavigationRoutes.UserProfile) {
-            UserProfile()
-        }
-
         // RaCreation Route
         composable(route = NavigationRoutes.RaCreation) {
-            RaCreation( navBack = { navController.navigateUp() })
+            RaCreation(navBack = { navController.navigateUp() })
         }
+
+        // User Profile Route
+        composable(
+            route = NavigationRoutes.UserProfile,
+        ) {
+            UserProfile(navBack = { navController.navigateUp() },
+                navHome = {
+                    navController.navigate(NavigationRoutes.Home) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+//        // Menu Route
+//        composable(route = NavigationRoutes.Menu) {
+//            Menu()
+//        }
+
+        // Bulletin Board Creation Route
+//        composable(route = NavigationRoutes.BulletinCreation) {
+//            BulletinCreation(navBack = { navController.navigateUp() })
+//        }
+
+        // Bulletin Board Edit Route [TEST]
+        composable(
+            route = "${NavigationRoutes.BulletinCreation}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType }
+            )) { backStackEntry ->
+            backStackEntry.arguments?.getString("id")?.let {
+                BulletinCreation(
+                    navBack = { navController.navigateUp() },
+                    id = it
+                )
+            }
+//            BulletinCreation(
+//                navBack = { navController.navigateUp() },
+//                id = it.arguments?.getString("id") ?: ""
+//            )
+        }
+
+        // Chatroom Route
+        composable(route = NavigationRoutes.Chatroom) {
+            Chatroom()
+        }
+
+        // Marketplace Route
+        composable(route = NavigationRoutes.Marketplace) {
+            Marketplace()
+        }
+
+        // Phonebook Route
+        composable(route = NavigationRoutes.Phonebook) {
+            Phonebook()
+        }
+
+        // VisitorRegistration Route
+        composable(route = NavigationRoutes.VisitorRegRoute) {
+            VisitorRegistration()
+        }
+
+        // Logout Route
+        composable(route = NavigationRoutes.LogoutRoute) {
+            navController.navigate(NavigationRoutes.Login) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
+        }
+        /*
+    // User Profile Route with Arguments
+    composable(
+        route = "${NavigationRoutes.UserProfile}/{fromSetup}",
+        arguments = listOf(navArgument("fromSetup") { type = NavType.StringType }
+        )) {
+        UserProfile(
+            navBack = { navController.navigateUp() },
+            fromSetup = it.arguments?.getString("fromSetup") ?: ""
+        )
+    }
+*/
     }
 }
 

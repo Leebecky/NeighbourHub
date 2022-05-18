@@ -37,6 +37,7 @@ fun UserWelcome(navInvitation: () -> Unit) {
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES, name = "Dark Preview")
 @Composable
@@ -46,4 +47,4 @@ fun UserWelcomePreview() {
             UserWelcome(navInvitation = {})
         }
     }
-}
+}*/

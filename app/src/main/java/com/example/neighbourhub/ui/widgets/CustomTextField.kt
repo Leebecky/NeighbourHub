@@ -3,7 +3,6 @@ package com.example.neighbourhub.ui.widgets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
@@ -15,6 +14,7 @@ fun CustomOutlinedTextField(
     onValueChangeFun: (String) -> Unit,
     modifier: Modifier = Modifier,
     isSingleLine: Boolean = false,
+    isEnabled: Boolean = true,
     trailingIcon: @Composable ()-> Unit = {},
 ) {
     OutlinedTextField(
@@ -23,12 +23,13 @@ fun CustomOutlinedTextField(
         label = { Text(text = labelText) },
         singleLine = isSingleLine,
         modifier = modifier,
-        trailingIcon = trailingIcon
+        trailingIcon = trailingIcon,
+        enabled = isEnabled
     )
 }
 
 @Composable
-fun CustomTextField(
+fun CustomFilledTextField(
     labelText: String,
     textValue: String,
     onValueChangeFun: (String) -> Unit,
@@ -61,7 +62,7 @@ fun CustomOutlinedTextFieldPreview() {
 fun CustomTextFieldPreview() {
     NeighbourHubTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            CustomTextField("test", "test", {})
+            CustomFilledTextField("test", "test", {})
         }
     }
 }
