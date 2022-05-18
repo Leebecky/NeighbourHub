@@ -3,10 +3,13 @@ package com.example.neighbourhub.models
 import android.os.Parcelable
 import android.util.Log
 import com.example.neighbourhub.utils.DatabaseCollection
+import com.google.android.gms.common.api.Response
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
+import com.google.rpc.context.AttributeContext
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
 import java.lang.Exception
@@ -19,18 +22,20 @@ data class Bulletin(
     var imageUrl: String = "",
     var status: String = "",
     var createdBy: String = "",
+    var raId:String = ""
 ) : Parcelable {
     companion object {
         private val firestore = Firebase.firestore.collection(DatabaseCollection.BULLETIN)
 
-        // Retrieve bulletin list
-        suspend fun getBulletinList(): List<Bulletin> {
+        // Retrieve bulletin list by resident association
+        suspend fun getBulletinList(ra:String): List<Bulletin> {
             return try {
-                val data = firestore.get().await()
+
+                val data = firestore.whereEqualTo("raId", ra).get().await()
                 if (!data.isEmpty) {
                     data.toObjects()
                 } else {
-                   emptyList()
+                    emptyList()
                 }
             } catch (ex: Exception) {
                 Log.println(Log.INFO, "Test", ex.message.orEmpty())
@@ -38,12 +43,30 @@ data class Bulletin(
             }
         }
 
+        // Retrieve bulletin record
+        suspend fun getBulletinRecord(id: String): Bulletin? {
+            return try {
+                val data = firestore.document(id).get().await()
+
+                return if (data != null) {
+                    data.toObject<Bulletin>()
+                } else {
+                    Bulletin()
+                }
+
+            } catch (ex: Exception) {
+                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Bulletin()
+            }
+        }
+
+
         // Update/Create Bulletin records
         suspend fun updateBulletin(data: Bulletin): Boolean {
             return try {
                 val doc: DocumentReference
 
-                if (data.id != "") {
+                if (data.id != "-1") {
                     doc = firestore.document(data.id)
                 } else {
                     doc = firestore.document()

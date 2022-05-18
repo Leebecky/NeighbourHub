@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
@@ -38,8 +39,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun BulletinCreation(
     navBack: () -> Unit,
+    id: String = "",
     vm: BulletinCreationViewModel = viewModel()
 ) {
+    // Local state/variables
     val displayMode =
         if (isSystemInDarkTheme()) R.drawable.ic_baseline_image_search_24 else R.drawable.ic_baseline_image_search_24_dark
     val scope = rememberCoroutineScope()
@@ -48,6 +51,7 @@ fun BulletinCreation(
     var showErrorDialog by remember { mutableStateOf(false) }
     var showImgErrorDialog by remember { mutableStateOf(false) }
     var showUserErrorDialog by remember { mutableStateOf(false) }
+    val editable = (vm.createdBy == Users.currentUserId || vm.id == "-1")
 
     // Loading Image from Gallery
     val launcher = rememberLauncherForActivityResult(
@@ -61,8 +65,8 @@ fun BulletinCreation(
 
     // Content
     Scaffold(
-        topBar = { CustomTopAppBar_Back(title = "New Bulletin", navBack = navBack) }
-    ) {
+        topBar = { CustomTopAppBar_Back(title = "Bulletin Details", navBack = navBack) }
+    ) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -76,66 +80,85 @@ fun BulletinCreation(
                 modifier = Modifier
                     .size(150.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable {
+                    .clickable(enabled = editable) {
                         launcher.launch("image/*")
+                        vm.hasImg = false
                     },
                 painter = painter,
                 contentDescription = "${vm.title} Image",
             )
 
-            // Click to Open Gallery
-            CustomButton(
-                btnText = "Remove Image",
-                btnColor = Color.Red,
-                onClickFun = { vm.url = "" },
-                modifier = Modifier
-                    .width(250.dp)
-                    .height(50.dp)
-            )
+            if (editable) {
+                // Click to Remove Image
+                CustomButton(
+                    btnText = "Remove Image",
+                    btnColor = Color.Red,
+                    onClickFun = { vm.url = "" },
+                    modifier = Modifier
+                        .width(250.dp)
+                        .height(50.dp)
+                )
+            }
 
             CustomOutlinedTextField( //Title
                 labelText = "Title",
                 textValue = vm.title,
                 onValueChangeFun = { vm.title = it },
-                isSingleLine = true
+                isSingleLine = true,
+                isEnabled = editable
             )
 
             CustomOutlinedTextField( //Description
                 labelText = "Description",
                 textValue = vm.desc,
-                onValueChangeFun = { vm.desc = it })
+                onValueChangeFun = { vm.desc = it },
+                isEnabled = editable
+            )
 
-            CustomButtonLoader(
-                btnText = "Save",
-                showLoader = loaderState,
-                onClickFun = {
-                    loaderState = true
-                    //TODO: Validation
-                    scope.launch {
+            // Only records belonging to the user can be edited
+            // TODO: Or Committee
+            if (editable) {
+                CustomButtonLoader(
+                    btnText = "Save",
+                    showLoader = loaderState,
+                    onClickFun = {
+                        loaderState = true
+                        //TODO: Validation
+                        //TODO: NO PHOTO = CRASH
+                        scope.launch {
 
-                        if (Users.currentUserId != "") { // Checking user id
+                            if (Users.currentUserId != "") { // Checking user id
 
-                            // Uploading Image to Firebase Storage
-                            val imgUrl = vm.UploadImage(vm.url)
+                                var imgUrl = vm.url
+                                if (vm.url != "" && !vm.hasImg) {
+                                    // Uploading Image to Firebase Storage
+                                    // if an image has been selected and its not an existing image
+                                    imgUrl = vm.uploadImage(vm.url, vm.title)
+                                }
 
-                            if (imgUrl != "") { // Verifying upload
-                                // Updating/Creating Record
-                                val status = vm.UpdateBulletin(Users.currentUserId, imgUrl)
-                                if (status) {
-                                    //TODO: SNACKBAR - Data Saved
+                                if (imgUrl != "-1") { // Verifying upload
+                                    // Updating/Creating Record
+                                    val status = vm.updateBulletin(Users.currentUserId, imgUrl)
+                                    if (status) {
+                                        //TODO: SNACKBAR - Data Saved
+                                        navBack()
+                                    } else {
+                                        showErrorDialog = true
+                                        loaderState = false
+                                    }
                                 } else {
-                                    showErrorDialog = true
+                                    showImgErrorDialog = true
+                                    loaderState = false
                                 }
                             } else {
-                                showImgErrorDialog = true
+                                showUserErrorDialog = true
+                                loaderState = false
                             }
-                        } else {
-                            showUserErrorDialog = true
                         }
+
                     }
-                    loaderState = false
-                }
-            )
+                )
+            }
 
             // ERROR ALERT DIALOG
             if (showErrorDialog) {
@@ -162,6 +185,7 @@ fun BulletinCreation(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Preview")
 @Composable
@@ -172,3 +196,4 @@ fun BulletinCreationPreview() {
         }
     }
 }
+*/

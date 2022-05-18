@@ -13,6 +13,8 @@ object NavigationRoutes {
     const val Chatroom = "chatroom"
     const val Phonebook = "phonebook"
     const val Menu = "menu"
-    const val VisitorReg = "visitor_registration"
+    const val VisitorRegRoute = "visitor_registration"
     const val Marketplace = "marketplace"
+
+    const val LogoutRoute = "logout"
 }

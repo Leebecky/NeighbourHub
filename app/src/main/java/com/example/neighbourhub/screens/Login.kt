@@ -21,7 +21,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.neighbourhub.R
+import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.ui.widgets.CustomButton
+import com.example.neighbourhub.ui.widgets.CustomDialogClose
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome: () -> Unit) {
     var showPassword by remember { mutableStateOf(false) }
+    var showLoginError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 //    Surface(color = MaterialTheme.colors.background)
 //     {
@@ -69,7 +72,7 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
             }
         )
         Spacer(Modifier.height(30.dp))
-        CustomButton(
+        CustomButton( //TODO Implement CustomLoaderButton
             btnText = "Login",
             onClickFun = {
                 scope.launch {
@@ -77,8 +80,10 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
 
                     if (data != null) { // Navigate to Home page
 //                        data.user?.let { vm.updateCurrentUser(it.uid) }
+                        Users.updateLoginUser()
                         navHome()
                     } else { //TODO: Display Error Message
+                        showLoginError = true
                         Log.println(Log.INFO, "Test", "Login Failed")
                     }
                 }
@@ -94,6 +99,14 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
                 .clickable {
                     navRegistration()
                 })
+
+        if (showLoginError) { //Login Error Dialog
+            CustomDialogClose(
+                alertTitle = "Authentication Error",
+                alertBody = "Failed to login. Please try again",
+                onDismissFun = { showLoginError = false },
+                btnCloseClick = { showLoginError = false })
+        }
     }
 }
 //}

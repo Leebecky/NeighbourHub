@@ -102,6 +102,7 @@ fun RaInvitation(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Preview")
 @Composable
@@ -111,4 +112,4 @@ fun RaInvitationPreview() {
             RaInvitation({}, {}, RaInvitationViewModel())
         }
     }
-}
+}*/

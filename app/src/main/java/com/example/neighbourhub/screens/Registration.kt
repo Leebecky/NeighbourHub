@@ -40,7 +40,7 @@ fun Registration(
         topBar = {
             CustomTopAppBar_Back("Register", navBack = navBack)
         }
-    ) {
+    ) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
@@ -86,7 +86,7 @@ fun Registration(
                         if (data != null) { // Navigate to Home page
                             navHome()
                         } else { //TODO: Display Error Message
-                            Log.println(Log.INFO, "Test", "Login Failed")
+                            Log.println(Log.INFO, "Test", "Registration Failed")
                         }
                     }
                 },

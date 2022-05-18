@@ -28,7 +28,11 @@ data class Users(
 ) : Parcelable {
     companion object {
         private val firebase = Firebase.firestore.collection(DatabaseCollection.USERS)
-        val currentUserId = Firebase.auth.currentUser?.uid
+        var currentUserId = Firebase.auth.currentUser?.uid
+
+        fun updateLoginUser() {
+            currentUserId = Firebase.auth.currentUser?.uid
+        }
 
         //? Retrieve the User Profile from the database
         suspend fun getCurrentUser(userId: String): Users? {
@@ -54,7 +58,7 @@ data class Users(
         }
 
         // New User Registration
-       suspend fun registerUser(userId: String, email: String) {
+        suspend fun registerUser(userId: String, email: String) {
             try {
 
                 val data: Users = Users(

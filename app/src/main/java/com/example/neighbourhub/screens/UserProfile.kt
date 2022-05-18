@@ -27,7 +27,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserProfile(
     vm: UserProfileViewModel = viewModel(),
-    navBack: () -> Unit
+    navBack: () -> Unit,
+    navHome: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
@@ -43,7 +44,7 @@ fun UserProfile(
     Scaffold(
         topBar = {
             CustomTopAppBar_Back(title = "User Profile", navBack = navBack)
-        }) {
+        }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -111,7 +112,12 @@ fun UserProfile(
                 scope.launch {
                     loaderState = true
                     val status = vm.updateProfile()
-                    //TODO: Add error dialog
+                    if (status) {
+                        //Return to Home
+                        navHome()
+                    } else {
+                        //TODO: Add error dialog
+                    }
                     loaderState = false
                 }
             }, showLoader = loaderState, modifier = Modifier.padding(top = 30.dp))
@@ -119,6 +125,7 @@ fun UserProfile(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Preview")
 @Composable
@@ -129,3 +136,4 @@ fun UserProfilePreview() {
         }
     }
 }
+*/

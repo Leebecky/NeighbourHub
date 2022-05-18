@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.neighbourhub.screens.residents.bulletin.BulletinBoard
 import com.example.neighbourhub.screens.residents.Chatroom
 import com.example.neighbourhub.screens.residents.Marketplace
@@ -14,7 +15,13 @@ import com.example.neighbourhub.utils.NavigationRoutes
 import com.example.neighbourhub.viewmodel.HomeViewModel
 
 @Composable
-fun Home(navBack: () -> Unit, navBulletinCreation:()->Unit, vm: HomeViewModel = viewModel()) {
+fun Home(
+    navBack: () -> Unit,
+    navOut: () -> Unit,
+    navBulletinCreation: (id: String) -> Unit,
+    navController: NavController,
+    vm: HomeViewModel = viewModel()
+) {
     var currentRoute by remember { mutableStateOf(NavigationRoutes.Bulletin) }
 
     Scaffold(
@@ -48,8 +55,11 @@ fun Home(navBack: () -> Unit, navBulletinCreation:()->Unit, vm: HomeViewModel = 
                 NavigationRoutes.Chatroom -> Chatroom()
                 NavigationRoutes.Marketplace -> Marketplace()
 //                NavigationRoutes.Bulletin -> BulletinCreation(navBack = navBack)
-                NavigationRoutes.Bulletin -> BulletinBoard(padding = padding, navCreation = navBulletinCreation)
-                NavigationRoutes.Menu -> Menu()
+                NavigationRoutes.Bulletin -> BulletinBoard(
+                    padding = padding,
+                    navCreation = navBulletinCreation
+                )
+                NavigationRoutes.Menu -> Menu(navOut, navController)
             }
 
         })
@@ -57,17 +67,17 @@ fun Home(navBack: () -> Unit, navBulletinCreation:()->Unit, vm: HomeViewModel = 
 }
 
 
-@Preview(showBackground = true)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    name = "Dark Preview"
-)
-@Composable
-fun HomePreview() {
-    NeighbourHubTheme {
-        Surface {
-            Home({}, {}, HomeViewModel())
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Preview(
+//    showBackground = true,
+//    uiMode = Configuration.UI_MODE_NIGHT_YES,
+//    name = "Dark Preview"
+//)
+//@Composable
+//fun HomePreview() {
+//    NeighbourHubTheme {
+//        Surface {
+//            Home({}, {}, HomeViewModel())
+//        }
+//    }
+//}

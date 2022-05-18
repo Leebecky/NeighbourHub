@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.neighbourhub.models.Users
@@ -21,7 +19,10 @@ import com.example.neighbourhub.screens.Home
 import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.screens.Registration
 import com.example.neighbourhub.screens.UserProfile
-import com.example.neighbourhub.screens.residents.*
+import com.example.neighbourhub.screens.residents.Chatroom
+import com.example.neighbourhub.screens.residents.Marketplace
+import com.example.neighbourhub.screens.residents.Phonebook
+import com.example.neighbourhub.screens.residents.VisitorRegistration
 import com.example.neighbourhub.screens.residents.bulletin.BulletinCreation
 import com.example.neighbourhub.screens.setup.RaCreation
 import com.example.neighbourhub.screens.setup.RaInvitation
@@ -32,7 +33,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 class MainActivity : ComponentActivity() {
-    var myUser: Users? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,26 +65,38 @@ fun NavigationController(currentUser: FirebaseUser?) {
         composable(route = NavigationRoutes.Login) {
             Login(
                 navRegistration = { navController.navigate(NavigationRoutes.Registration) },
-                navHome = { navController.navigate(NavigationRoutes.SetupWelcome) }
-            )
+                navHome = {
+                    navController.navigate(NavigationRoutes.Home) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                })
         }
 
         // Registration Route
         composable(route = NavigationRoutes.Registration) {
             Registration(
                 navBack = { navController.navigateUp() },
-                navHome = { navController.navigate(NavigationRoutes.Home) }
+                navHome = { navController.navigate(NavigationRoutes.SetupWelcome) }
             )
         }
 
         // Home Route
         composable(route = NavigationRoutes.Home) {
-//            val backStackEntry by navController.currentBackStackEntryAsState()
-//            var currentRoute = backStackEntry?.destination?.route
-//            currentRoute = currentRoute ?: ""
+
             Home(
-                navBack = { navController.navigateUp() },
-                navBulletinCreation = { navController.navigate(NavigationRoutes.BulletinCreation) })
+                navBack = { navController.navigateUp() }, //Back function
+                navOut = { //Logout
+                    navController.navigate(NavigationRoutes.Login) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                //Bulletin board navi
+                navBulletinCreation = { navController.navigate("${NavigationRoutes.BulletinCreation}/$it") },
+            navController = navController)
         }
 
         // Setup/Welcome Route
@@ -108,18 +120,42 @@ fun NavigationController(currentUser: FirebaseUser?) {
         composable(
             route = NavigationRoutes.UserProfile,
         ) {
-            UserProfile(navBack = { navController.navigateUp() }
+            UserProfile(navBack = { navController.navigateUp() },
+                navHome = {
+                    navController.navigate(NavigationRoutes.Home) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 
-        // Menu Route
-        composable(route = NavigationRoutes.Menu) {
-            Menu()
-        }
+//        // Menu Route
+//        composable(route = NavigationRoutes.Menu) {
+//            Menu()
+//        }
 
         // Bulletin Board Creation Route
-        composable(route = NavigationRoutes.BulletinCreation) {
-            BulletinCreation(navBack = { navController.navigateUp() })
+//        composable(route = NavigationRoutes.BulletinCreation) {
+//            BulletinCreation(navBack = { navController.navigateUp() })
+//        }
+
+        // Bulletin Board Edit Route [TEST]
+        composable(
+            route = "${NavigationRoutes.BulletinCreation}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType }
+            )) { backStackEntry ->
+            backStackEntry.arguments?.getString("id")?.let {
+                BulletinCreation(
+                    navBack = { navController.navigateUp() },
+                    id = it
+                )
+            }
+//            BulletinCreation(
+//                navBack = { navController.navigateUp() },
+//                id = it.arguments?.getString("id") ?: ""
+//            )
         }
 
         // Chatroom Route
@@ -138,10 +174,18 @@ fun NavigationController(currentUser: FirebaseUser?) {
         }
 
         // VisitorRegistration Route
-        composable(route = NavigationRoutes.VisitorReg) {
+        composable(route = NavigationRoutes.VisitorRegRoute) {
             VisitorRegistration()
         }
 
+        // Logout Route
+        composable(route = NavigationRoutes.LogoutRoute) {
+            navController.navigate(NavigationRoutes.Login) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
+        }
         /*
     // User Profile Route with Arguments
     composable(
