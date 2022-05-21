@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class BulletinBoardViewModel : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
-
     val isRefreshing: StateFlow<Boolean>
         get() = _isRefreshing.asStateFlow()
 

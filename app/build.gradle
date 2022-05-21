@@ -30,6 +30,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -44,9 +45,7 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
-    }
-}
-
+    }}
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -64,15 +63,13 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-
     //LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0"
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+//    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0"
+//    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     //Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
     //ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
-
     //Coil
     implementation "io.coil-kt:coil-compose:1.4.0"
     //Material Icon - Complete List
@@ -82,9 +79,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.1'
-    //    coroutines support for firebase operations
+    //  coroutines support for firebase operations
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
-
-//    Swipe to refresh
+    //  Swipe to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:0.24.8-beta"
+    // QR Code Generation
+//    implementation 'io.github.g0dkar:qrcode-kotlin-android:3.0.0'
+
 }

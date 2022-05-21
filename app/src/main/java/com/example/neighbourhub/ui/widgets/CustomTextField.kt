@@ -15,7 +15,10 @@ fun CustomOutlinedTextField(
     modifier: Modifier = Modifier,
     isSingleLine: Boolean = false,
     isEnabled: Boolean = true,
-    trailingIcon: @Composable ()-> Unit = {},
+    isReadOnly: Boolean = false,
+    errorState:Boolean = false,
+    maxLines:Int = 3,
+    trailingIcon: @Composable () -> Unit = {},
 ) {
     OutlinedTextField(
         value = textValue,
@@ -24,7 +27,10 @@ fun CustomOutlinedTextField(
         singleLine = isSingleLine,
         modifier = modifier,
         trailingIcon = trailingIcon,
-        enabled = isEnabled
+        enabled = isEnabled,
+        readOnly = isReadOnly,
+        isError = errorState,
+        maxLines = maxLines
     )
 }
 
@@ -34,7 +40,7 @@ fun CustomFilledTextField(
     textValue: String,
     onValueChangeFun: (String) -> Unit,
     isSingleLine: Boolean = false,
-    trailingIcon: @Composable ()-> Unit = {},
+    trailingIcon: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TextField(

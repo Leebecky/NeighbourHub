@@ -1,23 +1,16 @@
 package com.example.neighbourhub.screens
 
-import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.ui.widgets.CustomButtonLoader
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
@@ -33,14 +26,7 @@ fun UserProfile(
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
     var loaderState by remember { mutableStateOf(false) }
-
-    // Retrieving logged in user data
-    var currentUser: Users? = null
-    LaunchedEffect(key1 = Unit) {
-        currentUser = Users.currentUserId?.let { Users.getCurrentUser(it) }
-        vm.init(currentUser)
-    }
-
+    
     Scaffold(
         topBar = {
             CustomTopAppBar_Back(title = "User Profile", navBack = navBack)
@@ -49,7 +35,7 @@ fun UserProfile(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(scroll)
         ) {
@@ -108,7 +94,8 @@ fun UserProfile(
                 onValueChangeFun = { }, isEnabled = false
             )
 
-            CustomButtonLoader(btnText = "Save", onClickFun = {
+            CustomButtonLoader(btnText = "Save",
+                onClickFun = {
                 scope.launch {
                     loaderState = true
                     val status = vm.updateProfile()
@@ -120,7 +107,7 @@ fun UserProfile(
                     }
                     loaderState = false
                 }
-            }, showLoader = loaderState, modifier = Modifier.padding(top = 30.dp))
+            }, showLoader = loaderState, modifier = Modifier.padding(vertical = 5.dp))
         }
     }
 }

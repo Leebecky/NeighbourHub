@@ -20,10 +20,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.neighbourhub.R
-import com.example.neighbourhub.ui.widgets.CustomButton
-import com.example.neighbourhub.ui.widgets.CustomIconButton
-import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
-import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
+import com.example.neighbourhub.ui.widgets.*
 import com.example.neighbourhub.viewmodel.RegistrationViewModel
 import kotlinx.coroutines.launch
 
@@ -35,6 +32,8 @@ fun Registration(
     vm: RegistrationViewModel = viewModel()
 ) {
     var showPassword by remember { mutableStateOf(false) }
+    var showRegistrationError by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
@@ -43,7 +42,9 @@ fun Registration(
     ) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) {
             Image(
                 painter = painterResource(R.drawable.logo_512),
@@ -77,22 +78,35 @@ fun Registration(
                 }
             )
             Spacer(Modifier.height(30.dp))
-            CustomButton(
+            CustomButtonLoader(//TODO: Validation
                 btnText = "Register",
+                showLoader = isLoading,
                 onClickFun = {
                     scope.launch {
+                        isLoading = true
+
                         val data = vm.registerUser()
-                        Log.println(Log.INFO, "Test", data.toString())
+
                         if (data != null) { // Navigate to Home page
                             navHome()
-                        } else { //TODO: Display Error Message
+                        } else {
+                            showRegistrationError = true
                             Log.println(Log.INFO, "Test", "Registration Failed")
                         }
+
+                        isLoading = false
                     }
                 },
                 modifier = Modifier.padding(top = 24.dp)
             )
 
+            if (showRegistrationError) { // Registration Dialog
+                CustomDialogClose(
+                    alertTitle = "Registration Failed",
+                    alertBody = "Error registering user. Please try again",
+                    onDismissFun = { showRegistrationError = false },
+                    btnCloseClick = { showRegistrationError = false })
+            }
         }
     }
 }

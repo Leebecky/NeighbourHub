@@ -1,36 +1,24 @@
 package com.example.neighbourhub.screens.residents.bulletin
 
-import android.content.ContentUris
-import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.ui.widgets.*
+import com.example.neighbourhub.utils.Constants
 import com.example.neighbourhub.viewmodel.BulletinCreationViewModel
 import kotlinx.coroutines.launch
 
@@ -51,7 +39,8 @@ fun BulletinCreation(
     var showErrorDialog by remember { mutableStateOf(false) }
     var showImgErrorDialog by remember { mutableStateOf(false) }
     var showUserErrorDialog by remember { mutableStateOf(false) }
-    val editable = (vm.createdBy == Users.currentUserId || vm.id == "-1")
+    val currentUser = vm.currentUser.collectAsState()
+    val editable = (vm.createdBy == Users.currentUserId || vm.id == "-1" || currentUser.value.userRole == Constants.CommitteeRole)
 
     // Loading Image from Gallery
     val launcher = rememberLauncherForActivityResult(
@@ -72,7 +61,7 @@ fun BulletinCreation(
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp)
+                .padding(padding)
                 .verticalScroll(scrollState)
         ) {
             // Image Upload
@@ -96,7 +85,7 @@ fun BulletinCreation(
                     onClickFun = { vm.url = "" },
                     modifier = Modifier
                         .width(250.dp)
-                        .height(50.dp)
+                        .height(40.dp)
                 )
             }
 
@@ -112,11 +101,11 @@ fun BulletinCreation(
                 labelText = "Description",
                 textValue = vm.desc,
                 onValueChangeFun = { vm.desc = it },
-                isEnabled = editable
+                isEnabled = editable,
+                modifier= Modifier.fillMaxWidth(0.8f)
             )
 
             // Only records belonging to the user can be edited
-            // TODO: Or Committee
             if (editable) {
                 CustomButtonLoader(
                     btnText = "Save",
@@ -124,7 +113,6 @@ fun BulletinCreation(
                     onClickFun = {
                         loaderState = true
                         //TODO: Validation
-                        //TODO: NO PHOTO = CRASH
                         scope.launch {
 
                             if (Users.currentUserId != "") { // Checking user id

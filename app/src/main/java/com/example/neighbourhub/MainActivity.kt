@@ -19,6 +19,7 @@ import com.example.neighbourhub.screens.Home
 import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.screens.Registration
 import com.example.neighbourhub.screens.UserProfile
+import com.example.neighbourhub.screens.committee.VisitorLog
 import com.example.neighbourhub.screens.residents.Chatroom
 import com.example.neighbourhub.screens.residents.Marketplace
 import com.example.neighbourhub.screens.residents.Phonebook
@@ -96,7 +97,8 @@ fun NavigationController(currentUser: FirebaseUser?) {
                 },
                 //Bulletin board navi
                 navBulletinCreation = { navController.navigate("${NavigationRoutes.BulletinCreation}/$it") },
-            navController = navController)
+                navController = navController
+            )
         }
 
         // Setup/Welcome Route
@@ -170,12 +172,12 @@ fun NavigationController(currentUser: FirebaseUser?) {
 
         // Phonebook Route
         composable(route = NavigationRoutes.Phonebook) {
-            Phonebook()
+            Phonebook(navBack = { navController.navigateUp() })
         }
 
         // VisitorRegistration Route
         composable(route = NavigationRoutes.VisitorRegRoute) {
-            VisitorRegistration()
+            VisitorRegistration(navBack = { navController.navigateUp() })
         }
 
         // Logout Route
@@ -186,6 +188,12 @@ fun NavigationController(currentUser: FirebaseUser?) {
                 }
             }
         }
+
+        //Visitor Log Route
+        composable(route = NavigationRoutes.VisitorLog) {
+            VisitorLog(navBack = { navController.navigateUp() })
+        }
+
         /*
     // User Profile Route with Arguments
     composable(

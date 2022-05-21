@@ -17,4 +17,5 @@ object NavigationRoutes {
     const val Marketplace = "marketplace"
 
     const val LogoutRoute = "logout"
+    const val VisitorLog = "visitor_log"
 }

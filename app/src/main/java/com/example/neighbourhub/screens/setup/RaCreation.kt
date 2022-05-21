@@ -1,9 +1,11 @@
 package com.example.neighbourhub.screens.setup
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -13,27 +15,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.neighbourhub.ui.theme.NeighbourHubTheme
-import com.example.neighbourhub.ui.widgets.CustomButton
-import com.example.neighbourhub.ui.widgets.CustomIconButton
-import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
-import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
+import com.example.neighbourhub.ui.widgets.*
 import com.example.neighbourhub.viewmodel.RaCreationViewModel
 
 @Composable
 fun RaCreation(vm: RaCreationViewModel = viewModel(), navBack: () -> Unit) {
     var dropdownExpansion by remember { mutableStateOf(false) }
-
+    var invCode by remember { mutableStateOf("") }
+    var showInvDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
     var txtFieldSize by remember { mutableStateOf(Size.Zero) }
+
+
     Scaffold(modifier = Modifier.fillMaxSize(),
-        topBar = { CustomTopAppBar_Back("RA Registration", navBack) }) {
+        topBar = { CustomTopAppBar_Back("RA Registration", navBack) }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(padding)
         ) {
             CustomOutlinedTextField(
                 labelText = "Residential Association Name",
@@ -71,6 +72,12 @@ fun RaCreation(vm: RaCreationViewModel = viewModel(), navBack: () -> Unit) {
             CustomOutlinedTextField(labelText = "State",
                 textValue = vm.addState,
                 onValueChangeFun = { vm.addState = it },
+                trailingIcon = {
+                    CustomIconButton(
+                        onClickFun = { dropdownExpansion = !dropdownExpansion },
+                        icon = if (dropdownExpansion) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
@@ -81,14 +88,7 @@ fun RaCreation(vm: RaCreationViewModel = viewModel(), navBack: () -> Unit) {
                         // the DropDown the same width
                         txtFieldSize = coordinates.size.toSize()
                     }
-
-            ) {
-                CustomIconButton(
-                    onClickFun = { dropdownExpansion = !dropdownExpansion },
-                    icon = if (dropdownExpansion) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
-                )
-
-            }
+            )
             //State Selection Dropdown
             DropdownMenu(
                 expanded = dropdownExpansion,
@@ -107,11 +107,28 @@ fun RaCreation(vm: RaCreationViewModel = viewModel(), navBack: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             // Button
             //  TODO: RA Creation - Data Validation
-            CustomButton(
+            CustomButtonLoader(
                 btnText = "Submit",
-                onClickFun = { vm.registerAssociation() },
+                showLoader = isLoading,
+                onClickFun = {
+                    isLoading = true
+                    showInvDialog = true
+                    invCode = vm.registerAssociation()
+                    isLoading = false
+                },
                 modifier = Modifier.padding(bottom = 50.dp)
             )
+
+            if (showInvDialog) {
+                CustomDialogClose(
+                    alertTitle = "Invitation Code",
+                    alertBody = "${vm.residentialName} has been successfully registered.\nThe invitation code is: $invCode",
+                    onDismissFun = { showInvDialog = false; navBack() },
+                    btnCloseClick = {
+                        showInvDialog = false
+                        navBack()
+                    })
+            }
         }
     }
 }

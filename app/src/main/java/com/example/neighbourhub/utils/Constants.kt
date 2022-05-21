@@ -10,4 +10,7 @@ object Constants {
     const val PaidStatus = "Paid"
     const val UnpaidStatus = "Unpaid"
 
+    const val VisitorRegistered = "Registered"
+    const val VisitorEntered = "Visited"
+
 }
