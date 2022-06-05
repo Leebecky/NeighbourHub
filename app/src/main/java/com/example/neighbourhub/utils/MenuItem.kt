@@ -47,4 +47,11 @@ sealed class MenuItem(
         NavigationRoutes.VisitorLog,
         Constants.CommitteeRole
     )
+
+    object ManagePayment_Com : MenuItem(
+        "Manage Payment",
+        Icons.Filled.RequestQuote,
+        NavigationRoutes.ManagePayment,
+        Constants.CommitteeRole
+    )
 }

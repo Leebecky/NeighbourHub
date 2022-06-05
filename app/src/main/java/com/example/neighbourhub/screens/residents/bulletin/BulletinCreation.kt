@@ -7,7 +7,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,14 +35,23 @@ fun BulletinCreation(
     // Local state/variables
     val displayMode =
         if (isSystemInDarkTheme()) R.drawable.ic_baseline_image_search_24 else R.drawable.ic_baseline_image_search_24_dark
+
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
+    val scaffoldState = rememberScaffoldState()
+
     var loaderState by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var showImgErrorDialog by remember { mutableStateOf(false) }
     var showUserErrorDialog by remember { mutableStateOf(false) }
     val currentUser = vm.currentUser.collectAsState()
-    val editable = (vm.createdBy == Users.currentUserId || vm.id == "-1" || currentUser.value.userRole == Constants.CommitteeRole)
+    val editable =
+        (vm.createdBy == Users.currentUserId || vm.id == "-1" || currentUser.value.userRole == Constants.CommitteeRole)
+
+    // Textfield Error State
+    var titleError by rememberSaveable { mutableStateOf(false) }
+    var descError by rememberSaveable { mutableStateOf(false) }
+
 
     // Loading Image from Gallery
     val launcher = rememberLauncherForActivityResult(
@@ -54,15 +65,18 @@ fun BulletinCreation(
 
     // Content
     Scaffold(
-        topBar = { CustomTopAppBar_Back(title = "Bulletin Details", navBack = navBack) }
+        scaffoldState = scaffoldState,
+        topBar = { CustomTopAppBar_Back(title = "Bulletin Details", navBack = navBack) },
+        modifier = Modifier.fillMaxSize()
     ) { padding ->
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(horizontal = 16.dp)
                 .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(scrollState)
+//                .fillMaxWidth(0.8f)
+                .verticalScroll(scrollState),
         ) {
             // Image Upload
             Image(
@@ -92,17 +106,32 @@ fun BulletinCreation(
             CustomOutlinedTextField( //Title
                 labelText = "Title",
                 textValue = vm.title,
-                onValueChangeFun = { vm.title = it },
+                onValueChangeFun = {
+                    vm.title = it
+                    if (titleError) {
+                        titleError = false
+                    }
+                },
                 isSingleLine = true,
-                isEnabled = editable
+                isEnabled = editable,
+                errorState = titleError,
+                errorMsg = "Required field!"
             )
 
-            CustomOutlinedTextField( //Description
+            CustomOutlinedTextField(
+                //Description
                 labelText = "Description",
                 textValue = vm.desc,
-                onValueChangeFun = { vm.desc = it },
+                maxLines = 3,
+                onValueChangeFun = {
+                    vm.desc = it
+                    if (descError) {
+                        descError = false
+                    }
+                },
                 isEnabled = editable,
-                modifier= Modifier.fillMaxWidth(0.8f)
+                errorState = descError,
+                errorMsg = "Required field!"
             )
 
             // Only records belonging to the user can be edited
@@ -112,8 +141,37 @@ fun BulletinCreation(
                     showLoader = loaderState,
                     onClickFun = {
                         loaderState = true
-                        //TODO: Validation
+
                         scope.launch {
+
+                            // Input validation - Checking Title Content
+                            if (vm.title.isEmpty()) {
+                                titleError = true
+                                loaderState = false
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Please fill in all required fields",
+                                    //   actionLabel = "Do something."
+                                )
+                                return@launch
+                            } else {
+                                titleError = false
+                            }
+
+                            // Input validation - Checking Description Content
+                            if (vm.desc.isEmpty()) {
+                                descError = true
+                                loaderState = false
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Please fill in all required fields"
+                                )
+                                return@launch
+                            } else {
+                                descError = false
+                            }
 
                             if (Users.currentUserId != "") { // Checking user id
 
@@ -128,7 +186,10 @@ fun BulletinCreation(
                                     // Updating/Creating Record
                                     val status = vm.updateBulletin(Users.currentUserId, imgUrl)
                                     if (status) {
-                                        //TODO: SNACKBAR - Data Saved
+                                        // Display Snackbar
+                                        scaffoldState.snackbarHostState.showSnackbar(
+                                            message = "Bulletin has been saved. Please refresh the Bulletin page"
+                                        )
                                         navBack()
                                     } else {
                                         showErrorDialog = true
@@ -143,9 +204,7 @@ fun BulletinCreation(
                                 loaderState = false
                             }
                         }
-
-                    }
-                )
+                    })
             }
 
             // ERROR ALERT DIALOG

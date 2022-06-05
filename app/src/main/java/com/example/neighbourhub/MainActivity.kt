@@ -19,6 +19,7 @@ import com.example.neighbourhub.screens.Home
 import com.example.neighbourhub.screens.Login
 import com.example.neighbourhub.screens.Registration
 import com.example.neighbourhub.screens.UserProfile
+import com.example.neighbourhub.screens.committee.ManagePayment
 import com.example.neighbourhub.screens.committee.VisitorLog
 import com.example.neighbourhub.screens.residents.Chatroom
 import com.example.neighbourhub.screens.residents.Marketplace
@@ -168,6 +169,11 @@ fun NavigationController(currentUser: FirebaseUser?) {
         // Marketplace Route
         composable(route = NavigationRoutes.Marketplace) {
             Marketplace()
+        }
+
+        // Manage Payment Route
+        composable(route = NavigationRoutes.ManagePayment) {
+            ManagePayment(navCreation = {}, navBack = { navController.navigateUp() })
         }
 
         // Phonebook Route

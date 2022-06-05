@@ -16,6 +16,9 @@ object NavigationRoutes {
     const val VisitorRegRoute = "visitor_registration"
     const val Marketplace = "marketplace"
 
+    const val ManagePayment = "manage_payment"
+    const val Payment = "payment"
+
     const val LogoutRoute = "logout"
     const val VisitorLog = "visitor_log"
 }

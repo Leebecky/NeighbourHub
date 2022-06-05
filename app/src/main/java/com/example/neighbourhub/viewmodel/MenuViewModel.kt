@@ -12,6 +12,7 @@ class MenuViewModel : ViewModel() {
         MenuItem.VisitorRegItem,
         MenuItem.Phonebook,
         MenuItem.VisitorLog_Com,
+        MenuItem.ManagePayment_Com,
         MenuItem.LogoutItem
     )
 

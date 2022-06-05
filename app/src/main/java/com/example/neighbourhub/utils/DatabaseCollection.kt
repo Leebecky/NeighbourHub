@@ -8,4 +8,5 @@ object DatabaseCollection { // Firestore Database Collection Names
     const val PRODUCT = "Product"
     const val VISITOR = "Visitor"
     const val BULLETIN = "Bulletin"
+    const val PAYMENT = "Payment"
 }
