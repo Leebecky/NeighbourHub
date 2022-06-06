@@ -27,7 +27,7 @@ data class Users(
     var status: String = ""
 ) : Parcelable {
     companion object {
-        private val firebase = Firebase.firestore.collection(DatabaseCollection.USERS)
+        val firestore = Firebase.firestore.collection(DatabaseCollection.USERS)
         var currentUserId = Firebase.auth.currentUser?.uid
 
         fun updateLoginUser() {
@@ -37,7 +37,7 @@ data class Users(
         //? Retrieve the User Profile from the database
         suspend fun getCurrentUser(userId: String): Users? {
             try {
-                val data = firebase.document(userId).get().await()
+                val data = firestore.document(userId).get().await()
                 val currentUser: Users? = data.toObject<Users>()
                 return currentUser
             } catch (ex: Exception) {
@@ -49,7 +49,7 @@ data class Users(
         // Update User Profile
         suspend fun updateUserProfile(data: Users): Boolean {
             return try {
-                firebase.document(data.id).set(data).await()
+                firestore.document(data.id).set(data).await()
                 true
             } catch (ex: Exception) {
                 Log.println(Log.INFO, "Test", ex.message.orEmpty())
@@ -66,7 +66,7 @@ data class Users(
                     userRole = Constants.ResidentRole,
                     dateJoined = DateTimeManager().now("yyyy-MM-dd"),
                     email = email,
-                    status = "Active"
+                    status = Constants.PendingStatus
                 )
 
                 updateUserProfile(data)

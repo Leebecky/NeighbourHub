@@ -1,7 +1,5 @@
 package com.example.neighbourhub.viewmodel
 
-import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class BulletinCreationViewModel(
-//    application: Application,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -35,11 +32,6 @@ class BulletinCreationViewModel(
     val currentUser: StateFlow<Users>
         get() = _currentUser
     private var ra = currentUser.value.residentsAssociationId
-
-
-//    private val _uploadFilePath = MutableStateFlow("")
-//    val uploadFilePath: StateFlow<String>
-//        get() = _uploadFilePath
 
     init {
         viewModelScope.launch {
@@ -76,13 +68,13 @@ class BulletinCreationViewModel(
             raId = ra
         )
         return Bulletin.updateBulletin(post)
-
     }
 
     suspend fun uploadImage(filePath: String, fileName: String): String {
         return uploadImageCommon(filePath, fileName)
-
     }
 
-
+    suspend fun deleteBulletin(id:String):Boolean {
+        return Bulletin.deleteBulletin(id)
+    }
 }

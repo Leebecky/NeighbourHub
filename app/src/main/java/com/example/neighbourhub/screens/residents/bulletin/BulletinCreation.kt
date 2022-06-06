@@ -1,41 +1,36 @@
 package com.example.neighbourhub.screens.residents.bulletin
 
-import android.content.ContentUris
-import android.content.res.Configuration
-import android.graphics.Bitmap
+import android.Manifest
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.ui.widgets.*
+import com.example.neighbourhub.utils.Constants
 import com.example.neighbourhub.viewmodel.BulletinCreationViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
 //Reference: https://www.goodrequest.com/blog/jetpack-compose-basics-showing-images
 
+@ExperimentalPermissionsApi
 @Composable
 fun BulletinCreation(
     navBack: () -> Unit,
@@ -45,13 +40,24 @@ fun BulletinCreation(
     // Local state/variables
     val displayMode =
         if (isSystemInDarkTheme()) R.drawable.ic_baseline_image_search_24 else R.drawable.ic_baseline_image_search_24_dark
+
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
+    val scaffoldState = rememberScaffoldState()
+
     var loaderState by remember { mutableStateOf(false) }
+    var isDeleteLoading by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var showImgErrorDialog by remember { mutableStateOf(false) }
     var showUserErrorDialog by remember { mutableStateOf(false) }
-    val editable = (vm.createdBy == Users.currentUserId || vm.id == "-1")
+    val currentUser = vm.currentUser.collectAsState()
+    val editable =
+        (vm.createdBy == Users.currentUserId || vm.id == "-1" || currentUser.value.userRole == Constants.CommitteeRole)
+
+    // Textfield Error State
+    var titleError by rememberSaveable { mutableStateOf(false) }
+    var descError by rememberSaveable { mutableStateOf(false) }
 
     // Loading Image from Gallery
     val launcher = rememberLauncherForActivityResult(
@@ -63,17 +69,25 @@ fun BulletinCreation(
     val painter =
         rememberImagePainter(if (vm.url == "") displayMode else vm.url)
 
+    // Requesting Storage Access Permission
+    val permissionState = rememberPermissionState(
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+
     // Content
     Scaffold(
-        topBar = { CustomTopAppBar_Back(title = "Bulletin Details", navBack = navBack) }
+        scaffoldState = scaffoldState,
+        topBar = { CustomTopAppBar_Back(title = "Bulletin Details", navBack = navBack) },
+        modifier = Modifier.fillMaxSize()
     ) { padding ->
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(horizontal = 16.dp)
                 .fillMaxSize()
-                .padding(8.dp)
-                .verticalScroll(scrollState)
+//                .fillMaxWidth(0.8f)
+                .verticalScroll(scrollState),
         ) {
             // Image Upload
             Image(
@@ -81,7 +95,22 @@ fun BulletinCreation(
                     .size(150.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .clickable(enabled = editable) {
-                        launcher.launch("image/*")
+                        scope.launch {
+
+                            if (permissionState.status is PermissionStatus.Denied) {
+                                permissionState.launchPermissionRequest()
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Please select an image"
+                                )
+                            }
+
+                            if (permissionState.status is PermissionStatus.Granted) {
+                                launcher.launch("image/*")
+                            }
+                        }
+
                         vm.hasImg = false
                     },
                 painter = painter,
@@ -96,36 +125,79 @@ fun BulletinCreation(
                     onClickFun = { vm.url = "" },
                     modifier = Modifier
                         .width(250.dp)
-                        .height(50.dp)
+                        .height(45.dp)
                 )
             }
 
             CustomOutlinedTextField( //Title
                 labelText = "Title",
                 textValue = vm.title,
-                onValueChangeFun = { vm.title = it },
+                onValueChangeFun = {
+                    vm.title = it
+                    if (titleError) {
+                        titleError = false
+                    }
+                },
                 isSingleLine = true,
-                isEnabled = editable
+                isEnabled = editable,
+                errorState = titleError,
+                errorMsg = "Required field!"
             )
 
-            CustomOutlinedTextField( //Description
+            CustomOutlinedTextField(
+                //Description
                 labelText = "Description",
                 textValue = vm.desc,
-                onValueChangeFun = { vm.desc = it },
-                isEnabled = editable
+                maxLines = 3,
+                onValueChangeFun = {
+                    vm.desc = it
+                    if (descError) {
+                        descError = false
+                    }
+                },
+                isEnabled = editable,
+                errorState = descError,
+                errorMsg = "Required field!"
             )
 
             // Only records belonging to the user can be edited
-            // TODO: Or Committee
             if (editable) {
                 CustomButtonLoader(
                     btnText = "Save",
                     showLoader = loaderState,
                     onClickFun = {
                         loaderState = true
-                        //TODO: Validation
-                        //TODO: NO PHOTO = CRASH
+
                         scope.launch {
+
+                            // Input validation - Checking Title Content
+                            if (vm.title.isEmpty()) {
+                                titleError = true
+                                loaderState = false
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Please fill in all required fields",
+                                    //   actionLabel = "Do something."
+                                )
+                                return@launch
+                            } else {
+                                titleError = false
+                            }
+
+                            // Input validation - Checking Description Content
+                            if (vm.desc.isEmpty()) {
+                                descError = true
+                                loaderState = false
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Please fill in all required fields"
+                                )
+                                return@launch
+                            } else {
+                                descError = false
+                            }
 
                             if (Users.currentUserId != "") { // Checking user id
 
@@ -140,7 +212,10 @@ fun BulletinCreation(
                                     // Updating/Creating Record
                                     val status = vm.updateBulletin(Users.currentUserId, imgUrl)
                                     if (status) {
-                                        //TODO: SNACKBAR - Data Saved
+                                        // Display Snackbar
+                                        scaffoldState.snackbarHostState.showSnackbar(
+                                            message = "Bulletin has been saved. Please refresh the Bulletin page"
+                                        )
                                         navBack()
                                     } else {
                                         showErrorDialog = true
@@ -155,8 +230,47 @@ fun BulletinCreation(
                                 loaderState = false
                             }
                         }
+                    })
 
-                    }
+                //Delete Button
+                CustomButtonLoader(
+                    btnText = "Delete",
+                    onClickFun = { showDeleteDialog = true },
+                    showLoader = isDeleteLoading,
+                    btnColor = Color.Red,
+                    modifier = Modifier.height(40.dp)
+                )
+            }
+
+            // DELETE ALERT DIALOG
+            if (showDeleteDialog) {
+                CustomDialogBasic(
+                    alertTitle = "NeighbourHub",
+                    alertBody = "Are you sure you wish to delete this Bulletin?",
+                    onDismissFun = { showDeleteDialog = false },
+                    btnCancelClick = { showDeleteDialog = false },
+                    btnAcceptClick = {
+                        showDeleteDialog = false
+                        scope.launch {
+                            val deleteResult = vm.deleteBulletin(vm.id)
+
+                            if (deleteResult) {
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Bulletin successfully deleted. Please refresh the Bulletin page"
+                                )
+                                navBack()
+                            } else {
+                                isDeleteLoading = false
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Failed to delete the Bulletin. Please try again"
+                                )
+                            }
+
+                        }
+                    },
                 )
             }
 
@@ -181,6 +295,7 @@ fun BulletinCreation(
                     alertBody = "Upload error. Please select an image and try again",
                     onDismissFun = { showImgErrorDialog = false })
             }
+
         }
     }
 }

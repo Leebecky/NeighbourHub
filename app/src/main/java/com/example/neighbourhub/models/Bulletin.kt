@@ -3,16 +3,13 @@ package com.example.neighbourhub.models
 import android.os.Parcelable
 import android.util.Log
 import com.example.neighbourhub.utils.DatabaseCollection
-import com.google.android.gms.common.api.Response
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
-import com.google.rpc.context.AttributeContext
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
-import java.lang.Exception
 
 @Parcelize
 data class Bulletin(
@@ -22,13 +19,13 @@ data class Bulletin(
     var imageUrl: String = "",
     var status: String = "",
     var createdBy: String = "",
-    var raId:String = ""
+    var raId: String = ""
 ) : Parcelable {
     companion object {
         private val firestore = Firebase.firestore.collection(DatabaseCollection.BULLETIN)
 
         // Retrieve bulletin list by resident association
-        suspend fun getBulletinList(ra:String): List<Bulletin> {
+        suspend fun getBulletinList(ra: String): List<Bulletin> {
             return try {
 
                 val data = firestore.whereEqualTo("raId", ra).get().await()
@@ -77,9 +74,23 @@ data class Bulletin(
 
                 true
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 false
             }
         }
+
+        // Delete Bulletin Records
+        suspend fun deleteBulletin(id: String): Boolean {
+            return try {
+                val doc = firestore.document(id)
+                doc.delete().await()
+
+                true
+            } catch (ex: Exception) {
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
+                false
+            }
+        }
+
     }
 }

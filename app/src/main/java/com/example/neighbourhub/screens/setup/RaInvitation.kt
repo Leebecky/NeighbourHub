@@ -1,6 +1,5 @@
 package com.example.neighbourhub.screens.setup
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,10 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.ui.widgets.CustomButtonLoader
 import com.example.neighbourhub.ui.widgets.CustomDialogClose
 import com.example.neighbourhub.ui.widgets.CustomIconButton
@@ -46,13 +43,14 @@ fun RaInvitation(
                 labelText = "RA Invitation Code",
                 textValue = vm.invCode,
                 isSingleLine = true,
-                onValueChangeFun = { vm.invCode = it }
-            ) {
-                CustomIconButton(
-                    onClickFun = { openDialog = true },
-                    icon = Icons.Filled.Help
-                )
-            }
+                onValueChangeFun = { vm.invCode = it },
+                trailingIcon = {
+                    CustomIconButton(
+                        onClickFun = { openDialog = true },
+                        icon = Icons.Filled.Help
+                    )
+                }
+            )
             Spacer(modifier = Modifier.weight(1f))
             CustomButtonLoader(
                 btnText = "Join", onClickFun = {

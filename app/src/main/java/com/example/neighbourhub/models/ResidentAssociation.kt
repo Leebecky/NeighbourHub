@@ -6,6 +6,7 @@ import com.example.neighbourhub.utils.DatabaseCollection
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
@@ -17,11 +18,10 @@ data class ResidentAssociation(
     var raName: String = "",
     var invitationCode: String = "",
     var address: AddressLocation = AddressLocation(),
-    var committeeMemberList: List<Users> = emptyList(),
-    var householdList: List<Household> = emptyList()
+    var committeeMemberList: List<String> = emptyList(),
+    var householdList: List<String> = emptyList()
 ) : Parcelable {
     companion object {
-
         //Retrieve the RA collection from Firestore
         private val firestore = Firebase.firestore.collection(DatabaseCollection.RA)
 
@@ -32,6 +32,23 @@ data class ResidentAssociation(
                 data.documents[0].toObject<ResidentAssociation>()
             } else {
                 null
+            }
+        }
+
+        // Retrieve ra record
+        suspend fun getRaRecord(id: String): ResidentAssociation? {
+            return try {
+                val data = firestore.document(id).get().await()
+
+                return if (data != null) {
+                    data.toObject<ResidentAssociation>()
+                } else {
+                    ResidentAssociation()
+                }
+
+            } catch (ex: Exception) {
+                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                ResidentAssociation()
             }
         }
 
@@ -66,5 +83,22 @@ data class ResidentAssociation(
                 .joinToString("");
             return invCode
         }
+
+        //Get All Residents in Residential Area
+        suspend fun retrieveResidentsList(ra: String): List<Users> {
+            return try {
+                val data = Users.firestore.whereEqualTo("residentsAssociationId", ra).get().await()
+                if (!data.isEmpty) {
+                    data.toObjects()
+                } else {
+                    emptyList()
+                }
+            } catch (ex: Exception) {
+                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                emptyList()
+            }
+        }
+
+
     }
 }

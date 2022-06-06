@@ -1,7 +1,6 @@
 package com.example.neighbourhub.screens.residents.bulletin
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,9 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil.compose.rememberImagePainter
 import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Bulletin
@@ -45,8 +41,8 @@ fun BulletinBoard(
 ) {
 
     val bulletinList by vm.bulletinList.collectAsState()
-    val listState = rememberLazyListState()
     val isRefreshing by vm.isRefreshing.collectAsState()
+    val listState = rememberLazyListState()
 
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing),

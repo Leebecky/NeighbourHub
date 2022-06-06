@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.ui.widgets.CustomButton
+import com.example.neighbourhub.ui.widgets.CustomButtonLoader
 import com.example.neighbourhub.ui.widgets.CustomDialogClose
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.viewmodel.LoginViewModel
@@ -33,8 +34,8 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
     var showPassword by remember { mutableStateOf(false) }
     var showLoginError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-//    Surface(color = MaterialTheme.colors.background)
-//     {
+    var isLoading by remember { mutableStateOf(false) }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -72,20 +73,21 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
             }
         )
         Spacer(Modifier.height(30.dp))
-        CustomButton( //TODO Implement CustomLoaderButton
+        CustomButtonLoader(
             btnText = "Login",
+            showLoader = isLoading,
             onClickFun = {
                 scope.launch {
+                    isLoading = true
                     val data = vm.logInWithEmail()
 
                     if (data != null) { // Navigate to Home page
-//                        data.user?.let { vm.updateCurrentUser(it.uid) }
                         Users.updateLoginUser()
                         navHome()
-                    } else { //TODO: Display Error Message
+                    } else {
                         showLoginError = true
-                        Log.println(Log.INFO, "Test", "Login Failed")
                     }
+                    isLoading = false
                 }
             },
             modifier = Modifier.padding(top = 24.dp)

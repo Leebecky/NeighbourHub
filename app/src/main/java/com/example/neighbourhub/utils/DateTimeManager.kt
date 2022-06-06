@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DateTimeManager {
+
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
