@@ -15,8 +15,8 @@ class HomeViewModel:ViewModel() {
     var userRole = MutableStateFlow(currentUser.value.userRole)
 
     val bottomNavList = listOf(
-        BottomNavItem.Chatroom,
-        BottomNavItem.Marketplace,
+        BottomNavItem.VisitorRegistration,
+//        BottomNavItem.Marketplace,
         BottomNavItem.Bulletin,
         BottomNavItem.Menu,
     )

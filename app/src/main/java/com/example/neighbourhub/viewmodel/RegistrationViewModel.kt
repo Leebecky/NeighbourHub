@@ -19,7 +19,7 @@ class RegistrationViewModel() : ViewModel() {
     var email by mutableStateOf("")
     var password by mutableStateOf("")
 
-    suspend fun createUser(): AuthResult? {
+    private suspend fun createUser(): AuthResult? {
         return try {
             val data = Firebase.auth
                 .createUserWithEmailAndPassword(email, password)
@@ -34,6 +34,8 @@ class RegistrationViewModel() : ViewModel() {
         val auth = createUser()
         if (auth != null) {
             auth.user?.let { Users.registerUser(it.uid, it.email.orEmpty()) }
+            Firebase.auth.signInWithEmailAndPassword(email, password).await()
+            Users.updateLoginUser()
         }
         return auth
     }

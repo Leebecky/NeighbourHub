@@ -26,23 +26,7 @@ class RaCreationViewModel : ViewModel() {
         get() = _currentUser
     var userRole = MutableStateFlow(currentUser.value.userRole)
 
-    val stateList: List<String> = listOf(
-        "Johor",
-        "Kedah",
-        "Kelantan",
-        "Malacca",
-        "Negeri Sembilan",
-        "Pahang",
-        "Penang",
-        "Perak",
-        "Sabah",
-        "Sarawak",
-        "Selangor",
-        "Terengganu",
-        "Kuala Lumpur",
-        "Putrajaya",
-        "Labuan"
-    )
+    val stateList: List<String> = Constants.StateList
 
     //VM Initialised
     init {

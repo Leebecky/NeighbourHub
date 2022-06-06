@@ -2,25 +2,30 @@ package com.example.neighbourhub.screens
 
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.neighbourhub.screens.residents.Chatroom
-import com.example.neighbourhub.screens.residents.Marketplace
 import com.example.neighbourhub.screens.residents.Menu
+import com.example.neighbourhub.screens.residents.VisitorRegistration
 import com.example.neighbourhub.screens.residents.bulletin.BulletinBoard
 import com.example.neighbourhub.utils.NavigationRoutes
 import com.example.neighbourhub.viewmodel.HomeViewModel
 
 @Composable
 fun Home(
-    navBack: () -> Unit,
+    navHome: () -> Unit,
     navOut: () -> Unit,
     navBulletinCreation: (id: String) -> Unit,
     navController: NavController,
     vm: HomeViewModel = viewModel()
 ) {
-    var currentRoute by remember { mutableStateOf(NavigationRoutes.Bulletin) }
+    var currentRoute by rememberSaveable { mutableStateOf(NavigationRoutes.Bulletin) }
     val currentUser = vm.currentUser.collectAsState()
+    val scaffoldState = rememberScaffoldState()
+
+//    if (currentUser.value.status == Constants.PendingStatus) {
+//        navController.navigate(NavigationRoutes.UserProfile)
+//    }
 
     Scaffold(
         topBar = {
@@ -28,7 +33,7 @@ fun Home(
         },
         bottomBar = {
 
-            BottomAppBar() {
+            BottomAppBar {
                 vm.bottomNavList.forEach { item ->
                     BottomNavigationItem(
                         icon = {
@@ -50,8 +55,13 @@ fun Home(
         },
         content = { padding ->
             when (currentRoute) {
-                NavigationRoutes.Chatroom -> Chatroom()
-                NavigationRoutes.Marketplace -> Marketplace()
+//                NavigationRoutes.Chatroom -> Chatroom()
+//                NavigationRoutes.Marketplace -> Marketplace()
+                NavigationRoutes.VisitorRegRoute -> VisitorRegistration(
+                    padding = padding,
+                    navHome = navHome,
+                    scaffoldState = scaffoldState
+                )
                 NavigationRoutes.Bulletin -> BulletinBoard(
                     padding = padding,
                     navCreation = navBulletinCreation

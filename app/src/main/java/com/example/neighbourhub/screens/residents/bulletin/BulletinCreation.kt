@@ -1,5 +1,6 @@
 package com.example.neighbourhub.screens.residents.bulletin
 
+import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,10 +23,14 @@ import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.ui.widgets.*
 import com.example.neighbourhub.utils.Constants
 import com.example.neighbourhub.viewmodel.BulletinCreationViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
 //Reference: https://www.goodrequest.com/blog/jetpack-compose-basics-showing-images
 
+@ExperimentalPermissionsApi
 @Composable
 fun BulletinCreation(
     navBack: () -> Unit,
@@ -41,6 +46,8 @@ fun BulletinCreation(
     val scaffoldState = rememberScaffoldState()
 
     var loaderState by remember { mutableStateOf(false) }
+    var isDeleteLoading by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var showImgErrorDialog by remember { mutableStateOf(false) }
     var showUserErrorDialog by remember { mutableStateOf(false) }
@@ -52,7 +59,6 @@ fun BulletinCreation(
     var titleError by rememberSaveable { mutableStateOf(false) }
     var descError by rememberSaveable { mutableStateOf(false) }
 
-
     // Loading Image from Gallery
     val launcher = rememberLauncherForActivityResult(
         contract =
@@ -62,6 +68,11 @@ fun BulletinCreation(
     }
     val painter =
         rememberImagePainter(if (vm.url == "") displayMode else vm.url)
+
+    // Requesting Storage Access Permission
+    val permissionState = rememberPermissionState(
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
 
     // Content
     Scaffold(
@@ -84,7 +95,22 @@ fun BulletinCreation(
                     .size(150.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .clickable(enabled = editable) {
-                        launcher.launch("image/*")
+                        scope.launch {
+
+                            if (permissionState.status is PermissionStatus.Denied) {
+                                permissionState.launchPermissionRequest()
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Please select an image"
+                                )
+                            }
+
+                            if (permissionState.status is PermissionStatus.Granted) {
+                                launcher.launch("image/*")
+                            }
+                        }
+
                         vm.hasImg = false
                     },
                 painter = painter,
@@ -99,7 +125,7 @@ fun BulletinCreation(
                     onClickFun = { vm.url = "" },
                     modifier = Modifier
                         .width(250.dp)
-                        .height(40.dp)
+                        .height(45.dp)
                 )
             }
 
@@ -205,6 +231,47 @@ fun BulletinCreation(
                             }
                         }
                     })
+
+                //Delete Button
+                CustomButtonLoader(
+                    btnText = "Delete",
+                    onClickFun = { showDeleteDialog = true },
+                    showLoader = isDeleteLoading,
+                    btnColor = Color.Red,
+                    modifier = Modifier.height(40.dp)
+                )
+            }
+
+            // DELETE ALERT DIALOG
+            if (showDeleteDialog) {
+                CustomDialogBasic(
+                    alertTitle = "NeighbourHub",
+                    alertBody = "Are you sure you wish to delete this Bulletin?",
+                    onDismissFun = { showDeleteDialog = false },
+                    btnCancelClick = { showDeleteDialog = false },
+                    btnAcceptClick = {
+                        showDeleteDialog = false
+                        scope.launch {
+                            val deleteResult = vm.deleteBulletin(vm.id)
+
+                            if (deleteResult) {
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Bulletin successfully deleted. Please refresh the Bulletin page"
+                                )
+                                navBack()
+                            } else {
+                                isDeleteLoading = false
+
+                                // Display Snackbar
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Failed to delete the Bulletin. Please try again"
+                                )
+                            }
+
+                        }
+                    },
+                )
             }
 
             // ERROR ALERT DIALOG
@@ -228,6 +295,7 @@ fun BulletinCreation(
                     alertBody = "Upload error. Please select an image and try again",
                     onDismissFun = { showImgErrorDialog = false })
             }
+
         }
     }
 }

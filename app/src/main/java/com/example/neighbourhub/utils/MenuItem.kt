@@ -54,4 +54,11 @@ sealed class MenuItem(
         NavigationRoutes.ManagePayment,
         Constants.CommitteeRole
     )
+
+    object ManageRa_Com : MenuItem(
+        "Manage Resident Association",
+        Icons.Filled.ManageAccounts,
+        NavigationRoutes.ManageRa,
+        Constants.CommitteeRole
+    )
 }

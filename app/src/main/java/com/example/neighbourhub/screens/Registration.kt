@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +35,17 @@ fun Registration(
     var showPassword by remember { mutableStateOf(false) }
     var showRegistrationError by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+
     val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+
+    // Textfield Error State
+    var emailError by rememberSaveable { mutableStateOf(false) }
+    var passwordError by rememberSaveable { mutableStateOf(false) }
+    var passwordMsg = "Required Field!"
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             CustomTopAppBar_Back("Register", navBack = navBack)
         }
@@ -55,19 +65,31 @@ fun Registration(
                     .clip(RoundedCornerShape(10.dp))
             )
             Spacer(Modifier.height(50.dp))
-            CustomOutlinedTextField(
+            CustomOutlinedTextField( // Email
                 labelText = "Email",
                 textValue = vm.email,
-                onValueChangeFun = { vm.email = it },
+                onValueChangeFun = {
+                    vm.email = it
+                    if (emailError) {
+                        emailError = false
+                    }
+                },
                 modifier = Modifier.padding(top = 8.dp),
                 isSingleLine = true,
+                errorState = emailError,
+                errorMsg = "Required Field!"
             )
-            OutlinedTextField(
-                value = vm.password,
+            CustomOutlinedTextField( // Password
+                textValue = vm.password,
                 modifier = Modifier.padding(top = 8.dp),
-                label = { Text("Password") },
-                onValueChange = { vm.password = it },
-                singleLine = true,
+                labelText = "Password",
+                onValueChangeFun = {
+                    vm.password = it
+                    if (passwordError) {
+                        passwordError = false
+                    }
+                },
+                isSingleLine = true,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = { // Show/Hide Password icon
                     CustomIconButton(
@@ -75,7 +97,9 @@ fun Registration(
                         icon = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         btnDescription = "Show password"
                     )
-                }
+                },
+                errorState = passwordError,
+                errorMsg = passwordMsg
             )
             Spacer(Modifier.height(30.dp))
             CustomButtonLoader(//TODO: Validation
@@ -84,6 +108,48 @@ fun Registration(
                 onClickFun = {
                     scope.launch {
                         isLoading = true
+
+                        // Input validation - Checking Email Content
+                        if (vm.email.isEmpty()) {
+                            emailError = true
+                            isLoading = false
+
+                            // Display Snackbar
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = "Please fill in all required fields",
+                                //   actionLabel = "Do something."
+                            )
+                            return@launch
+                        } else {
+                            emailError = false
+                        }
+
+                        // Input validation - Checking Password Content
+                        if (vm.password.isEmpty()) {
+                            passwordError = true
+                            passwordMsg = "Required Field!"
+                            isLoading = false
+
+                            // Display Snackbar
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = "Please fill in all required fields",
+                                //   actionLabel = "Do something."
+                            )
+                            return@launch
+                        } else if (vm.password.length < 8) {
+                            passwordError = true
+                            passwordMsg = "Password should be at least 8 characters long!"
+                            isLoading = false
+
+                            // Display Snackbar
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = "Please check the Password field",
+                                //   actionLabel = "Do something."
+                            )
+                            return@launch
+                        } else {
+                            passwordError = false
+                        }
 
                         val data = vm.registerUser()
 

@@ -1,13 +1,9 @@
 package com.example.neighbourhub.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.internal.liveLiteral
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.neighbourhub.models.Bulletin
 import com.example.neighbourhub.models.Users
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,11 +40,4 @@ class BulletinBoardViewModel : ViewModel() {
             _bulletinList.value = Bulletin.getBulletinList(ra)
         }
     }
-
-
-    suspend fun GetBulletinList(): List<Bulletin> {
-        return Bulletin.getBulletinList(ra)
-    }
-
-
 }

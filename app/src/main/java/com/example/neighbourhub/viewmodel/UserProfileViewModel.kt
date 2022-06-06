@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.neighbourhub.MainActivity
 import com.example.neighbourhub.models.ResidentAssociation
 import com.example.neighbourhub.models.Users
+import com.example.neighbourhub.utils.Constants
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +35,8 @@ class UserProfileViewModel() : ViewModel() {
     //VM Initialised
     init {
         viewModelScope.launch {
-            _currentUser.value = Users.currentUserId?.let { Users.getCurrentUser(it) }!!
+            if (!Users.currentUserId.isNullOrEmpty()) {
+                _currentUser.value = Users.currentUserId?.let { Users.getCurrentUser(it) }!!
 
                 name = currentUser.value.name
                 contactNumber = currentUser.value.contactNumber
@@ -45,8 +47,10 @@ class UserProfileViewModel() : ViewModel() {
                 residentialArea = currentUser.value.address.residentialArea
                 state = currentUser.value.address.state
                 postcode = currentUser.value.address.postcode
+            }
         }
     }
+
 
 //    fun init(currentUser: Users?) {
 //        if (currentUser != null) {
@@ -73,10 +77,10 @@ class UserProfileViewModel() : ViewModel() {
             currentUser.contactNumber = contactNumber
             currentUser.address.houseNumber = houseNo
             currentUser.address.street = street
+            currentUser.status = Constants.ActiveStatus
             Users.updateUserProfile(currentUser)
         } else {
             false
         }
-
     }
 }

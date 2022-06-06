@@ -1,6 +1,7 @@
 package com.example.neighbourhub.utils
 
 object NavigationRoutes {
+    const val SplashScreen = "splashscreen"
     const val Login = "login"
     const val Registration = "registration"
     const val Home = "home"
@@ -18,6 +19,8 @@ object NavigationRoutes {
 
     const val ManagePayment = "manage_payment"
     const val Payment = "payment"
+
+    const val ManageRa = "manage_ra"
 
     const val LogoutRoute = "logout"
     const val VisitorLog = "visitor_log"

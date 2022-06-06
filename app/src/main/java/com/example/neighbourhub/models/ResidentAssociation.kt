@@ -35,6 +35,23 @@ data class ResidentAssociation(
             }
         }
 
+        // Retrieve ra record
+        suspend fun getRaRecord(id: String): ResidentAssociation? {
+            return try {
+                val data = firestore.document(id).get().await()
+
+                return if (data != null) {
+                    data.toObject<ResidentAssociation>()
+                } else {
+                    ResidentAssociation()
+                }
+
+            } catch (ex: Exception) {
+                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                ResidentAssociation()
+            }
+        }
+
         // Create/Update the corresponding record
         fun updateResidentAssociation(data: ResidentAssociation): Boolean {
             return try {
@@ -68,7 +85,7 @@ data class ResidentAssociation(
         }
 
         //Get All Residents in Residential Area
-       suspend fun retrieveResidentsList(ra:String):List<Users>{
+        suspend fun retrieveResidentsList(ra: String): List<Users> {
             return try {
                 val data = Users.firestore.whereEqualTo("residentsAssociationId", ra).get().await()
                 if (!data.isEmpty) {
@@ -81,5 +98,7 @@ data class ResidentAssociation(
                 emptyList()
             }
         }
+
+
     }
 }

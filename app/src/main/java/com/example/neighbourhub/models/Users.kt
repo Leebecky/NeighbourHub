@@ -66,7 +66,7 @@ data class Users(
                     userRole = Constants.ResidentRole,
                     dateJoined = DateTimeManager().now("yyyy-MM-dd"),
                     email = email,
-                    status = "Active"
+                    status = Constants.PendingStatus
                 )
 
                 updateUserProfile(data)

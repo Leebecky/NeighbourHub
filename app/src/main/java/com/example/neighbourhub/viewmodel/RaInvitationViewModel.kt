@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.neighbourhub.models.ResidentAssociation
 import com.example.neighbourhub.models.Users
+import com.example.neighbourhub.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.*
 import com.google.firebase.ktx.Firebase

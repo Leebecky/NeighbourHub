@@ -9,10 +9,10 @@ class MenuViewModel : ViewModel() {
 
     val menuItemList = listOf(
         MenuItem.UserProfile,
-        MenuItem.VisitorRegItem,
+//        MenuItem.VisitorRegItem,
         MenuItem.Phonebook,
         MenuItem.VisitorLog_Com,
-        MenuItem.ManagePayment_Com,
+        MenuItem.ManageRa_Com,
         MenuItem.LogoutItem
     )
 

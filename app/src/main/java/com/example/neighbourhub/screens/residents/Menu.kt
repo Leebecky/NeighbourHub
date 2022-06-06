@@ -11,18 +11,29 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.utils.Constants
 import com.example.neighbourhub.viewmodel.MenuViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 @Composable
-fun Menu(navOut: () -> Unit, navController: NavController, userRole:String, vm: MenuViewModel = viewModel()) {
-    Column() {
+fun Menu(
+    navOut: () -> Unit,
+    navController: NavController,
+    userRole: String,
+    vm: MenuViewModel = viewModel()
+) {
+
+    val scope = rememberCoroutineScope()
+
+    Column {
         vm.menuItemList.forEach { item ->
             if (item.accessLevel == Constants.ResidentRole || item.accessLevel == userRole) {
                 TextField(
@@ -48,9 +59,13 @@ fun Menu(navOut: () -> Unit, navController: NavController, userRole:String, vm: 
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(onClick = {
+
                             if (item.title == "Logout") {
-                                Firebase.auth.signOut()
+                                scope.launch {
+                                    Firebase.auth.signOut()
+                                    Users.currentUserId = ""
                                 navOut()
+                                }
                             } else {
                                 navController.navigate(item.route)
                             }

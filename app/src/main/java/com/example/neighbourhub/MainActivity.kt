@@ -14,26 +14,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.screens.Home
-import com.example.neighbourhub.screens.Login
-import com.example.neighbourhub.screens.Registration
-import com.example.neighbourhub.screens.UserProfile
+import com.example.neighbourhub.screens.*
 import com.example.neighbourhub.screens.committee.ManagePayment
+import com.example.neighbourhub.screens.committee.ManageRa
 import com.example.neighbourhub.screens.committee.VisitorLog
 import com.example.neighbourhub.screens.residents.Chatroom
 import com.example.neighbourhub.screens.residents.Marketplace
 import com.example.neighbourhub.screens.residents.Phonebook
-import com.example.neighbourhub.screens.residents.VisitorRegistration
 import com.example.neighbourhub.screens.residents.bulletin.BulletinCreation
 import com.example.neighbourhub.screens.setup.RaCreation
 import com.example.neighbourhub.screens.setup.RaInvitation
 import com.example.neighbourhub.screens.setup.UserWelcome
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.utils.NavigationRoutes
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
+@ExperimentalPermissionsApi
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +53,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalPermissionsApi
 @Composable
 fun NavigationController(currentUser: FirebaseUser?) {
     val startScreen: String =
         if (currentUser == null) NavigationRoutes.Login else NavigationRoutes.Home
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = startScreen) {
+    NavHost(navController = navController, startDestination = NavigationRoutes.SplashScreen) {
+
+        // SplashScreen
+        composable(route = NavigationRoutes.SplashScreen) {
+            SplashScreen(navController, startUpRoute = startScreen)
+        }
 
         // Login Route
         composable(route = NavigationRoutes.Login) {
@@ -88,7 +92,13 @@ fun NavigationController(currentUser: FirebaseUser?) {
         composable(route = NavigationRoutes.Home) {
 
             Home(
-                navBack = { navController.navigateUp() }, //Back function
+                navHome = { //Return to Home page
+                    navController.navigate(NavigationRoutes.Home) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                },
                 navOut = { //Logout
                     navController.navigate(NavigationRoutes.Login) {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -97,7 +107,8 @@ fun NavigationController(currentUser: FirebaseUser?) {
                     }
                 },
                 //Bulletin board navi
-                navBulletinCreation = { navController.navigate("${NavigationRoutes.BulletinCreation}/$it") },
+                navBulletinCreation =
+                { navController.navigate("${NavigationRoutes.BulletinCreation}/$it") },
                 navController = navController
             )
         }
@@ -176,15 +187,36 @@ fun NavigationController(currentUser: FirebaseUser?) {
             ManagePayment(navCreation = {}, navBack = { navController.navigateUp() })
         }
 
+        // Manage Ra Route
+        composable(route = NavigationRoutes.ManageRa) {
+            ManageRa(
+                navBack = { navController.navigateUp() },
+                navHome = {
+                    navController.navigate(NavigationRoutes.Home) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                })
+        }
+
         // Phonebook Route
         composable(route = NavigationRoutes.Phonebook) {
             Phonebook(navBack = { navController.navigateUp() })
         }
 
-        // VisitorRegistration Route
-        composable(route = NavigationRoutes.VisitorRegRoute) {
-            VisitorRegistration(navBack = { navController.navigateUp() })
-        }
+//        // VisitorRegistration Route
+//        composable(route = NavigationRoutes.VisitorRegRoute) {
+//            VisitorRegistration(
+//                navBack = { navController.navigateUp() },
+//                navHome = {
+//                    navController.navigate(NavigationRoutes.Home) {
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            inclusive = true
+//                        }
+//                    }
+//                })
+//        }
 
         // Logout Route
         composable(route = NavigationRoutes.LogoutRoute) {
