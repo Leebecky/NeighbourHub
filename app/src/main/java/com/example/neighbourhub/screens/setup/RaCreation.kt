@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -22,6 +23,7 @@ import com.example.neighbourhub.ui.widgets.*
 import com.example.neighbourhub.viewmodel.RaCreationViewModel
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun RaCreation(vm: RaCreationViewModel = viewModel(), navBack: () -> Unit) {
     var dropdownExpansion by remember { mutableStateOf(false) }

@@ -14,18 +14,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.DisabledByDefault
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.ui.widgets.CustomButtonLoader
 import com.example.neighbourhub.ui.widgets.CustomIconButton
@@ -35,6 +39,7 @@ import com.example.neighbourhub.viewmodel.ManageRaViewModel
 import kotlinx.coroutines.launch
 
 
+@ExperimentalComposeUiApi
 @Composable
 fun ManageRa(
     vm: ManageRaViewModel = viewModel(),
@@ -64,7 +69,7 @@ fun ManageRa(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            CustomTopAppBar_Back(title = "Manage Resident Association", navBack = navBack)
+            CustomTopAppBar_Back(title = stringResource(R.string.manage_ra_title), navBack = navBack)
         }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,13 +80,13 @@ fun ManageRa(
                 .verticalScroll(scroll)
         ) {
             Text(
-                text = "Resident Association Details",
+                text = stringResource(R.string.ra_details),
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
                     .padding(top = 25.dp)
             )
             CustomOutlinedTextField( // RA Name
-                labelText = "Resident Association Name",
+                labelText = stringResource(R.string.ra_name_field),
                 textValue = vm.raName,
                 onValueChangeFun = {
                     vm.raName = it
@@ -94,14 +99,14 @@ fun ManageRa(
             )
 
             CustomOutlinedTextField( // Invitation Code
-                labelText = "Invitation Code",
+                labelText = stringResource(R.string.inv_code_field),
                 textValue = vm.invCode,
                 onValueChangeFun = { }, isEnabled = false
             )
 
             // Resident Association Address
             Text(
-                text = "Address",
+                text = stringResource(R.string.address),
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
                     .padding(top = 25.dp)
@@ -109,7 +114,7 @@ fun ManageRa(
 
             CustomOutlinedTextField(
                 // RA Area Name
-                labelText = "Residential Area",
+                labelText = stringResource(R.string.residential_area_field),
                 textValue = vm.residentialArea,
                 onValueChangeFun = {
                     vm.residentialArea = it
@@ -123,7 +128,7 @@ fun ManageRa(
 
             CustomOutlinedTextField(
                 // Postcode
-                labelText = "Postcode",
+                labelText = stringResource(R.string.postcode_field),
                 textValue = vm.postcode,
                 onValueChangeFun = {
                     vm.postcode = it
@@ -138,7 +143,7 @@ fun ManageRa(
 
             Box {
                 // Text Field for dropdown placeholder
-                CustomOutlinedTextField(labelText = "State",
+                CustomOutlinedTextField(labelText = stringResource(R.string.state_field),
                     textValue = vm.state,
                     onValueChangeFun = {
                         vm.state = it
@@ -182,7 +187,7 @@ fun ManageRa(
 
             // Resident Association Committee
             Text(
-                text = "Committee",
+                text = stringResource(R.string.committee),
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
                     .padding(top = 25.dp)
@@ -190,7 +195,7 @@ fun ManageRa(
 
             Box {
                 CustomOutlinedTextField(
-                    labelText = "Committee List",
+                    labelText = stringResource(R.string.committee_list),
                     textValue = "",
                     onValueChangeFun = {},
                     isReadOnly = true,
@@ -230,13 +235,13 @@ fun ManageRa(
                 modifier = Modifier.height(250.dp)
             ) {
                 items(committeeList) { item ->
-                    MemberCard(item)
+                    MemberCard(item) { vm.removeCommittee(item) }
                 }
             }
 
 
             CustomButtonLoader(
-                btnText = "Save",
+                btnText = stringResource(R.string.save_btn),
                 onClickFun = {
                     scope.launch {
                         loaderState = true
@@ -326,18 +331,24 @@ fun ManageRa(
 }
 
 @Composable
-fun MemberCard(item: Users) {
+fun MemberCard(item: Users, removeUser:()->Unit) {
     Card(
 //        shape = AbsoluteRoundedCornerShape(topLeft = 20.dp, topRight = 20.dp),
         modifier = Modifier.fillMaxWidth(0.75f),
         border = BorderStroke(1.dp, Color.Gray)
     ) {
-        Column(modifier = Modifier.padding(start = 15.dp)) {
-            Text(text = item.name)
-            Text(
-                text = "${item.address.houseNumber}, ${item.address.street}",
-                style = MaterialTheme.typography.subtitle1
-            )
+
+        Row(
+          horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.padding(start = 15.dp)) {
+                Text(text = item.name,   style = MaterialTheme.typography.subtitle1)
+                Text(
+                    text = "${item.address.houseNumber}, ${item.address.street}",
+                    style = MaterialTheme.typography.subtitle2
+                )
+            }
+            CustomIconButton(onClickFun = removeUser, icon = Icons.Filled.DisabledByDefault)
         }
     }
 }

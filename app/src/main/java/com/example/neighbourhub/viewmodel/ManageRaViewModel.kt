@@ -77,6 +77,12 @@ class ManageRaViewModel : ViewModel() {
         _committeeList.value += data
     }
 
+    fun removeCommittee(data: Users) {
+        _committeeList.value -= data
+        data.userRole = Constants.ResidentRole
+        residentList.add(data)
+    }
+
     suspend fun updateRa(): Boolean {
         val ra = ResidentAssociation.getRaRecord(raId)
         val committeeMemberList: MutableList<String> = emptyList<String>().toMutableList()
@@ -88,6 +94,10 @@ class ManageRaViewModel : ViewModel() {
             committeeList.value.forEach { user ->
                 Users.updateUserProfile(user)
                 committeeMemberList.add(user.id)
+            }
+
+            residentList.forEach { user ->
+                Users.updateUserProfile(user)
             }
 
             ra.committeeMemberList = committeeMemberList

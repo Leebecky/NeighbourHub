@@ -10,7 +10,6 @@ import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
-import java.lang.Exception
 
 @Parcelize
 data class Visitor(
@@ -40,7 +39,7 @@ data class Visitor(
                     emptyList()
                 }
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 emptyList()
             }
         }
@@ -57,7 +56,7 @@ data class Visitor(
                 }
 
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 Visitor()
             }
         }
@@ -79,7 +78,7 @@ data class Visitor(
 
                 true
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 false
             }
         }

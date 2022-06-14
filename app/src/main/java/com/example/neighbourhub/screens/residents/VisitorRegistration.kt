@@ -3,28 +3,30 @@ package com.example.neighbourhub.screens.residents
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Visitor
 import com.example.neighbourhub.ui.widgets.*
 import com.example.neighbourhub.utils.DateTimeManager
 import com.example.neighbourhub.viewmodel.VisitorRegistrationViewModel
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun VisitorRegistration(
 //    navBack: () -> Unit,
     padding: PaddingValues,
     navHome: () -> Unit,
-    scaffoldState: ScaffoldState,
     vm: VisitorRegistrationViewModel = viewModel()
 ) {
 
@@ -43,7 +45,7 @@ fun VisitorRegistration(
     var timeError by rememberSaveable { mutableStateOf(false) }
 
     var bitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
-    var data by rememberSaveable { mutableStateOf<Visitor?>(null) }
+    var data:Visitor? by rememberSaveable { mutableStateOf(null) }
 
     //Content
 //    Scaffold(
@@ -60,7 +62,7 @@ fun VisitorRegistration(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             CustomOutlinedTextField( //Visitor Name
-                labelText = "Name",
+                labelText = stringResource(R.string.name_field),
                 textValue = vm.name,
                 onValueChangeFun = {
                     vm.name = it
@@ -69,12 +71,10 @@ fun VisitorRegistration(
                     }
                 },
                 errorState = nameError,
-                errorMsg = "Required Field!",
-                modifier = Modifier.padding(top = 16.dp)
             )
 
             CustomOutlinedTextField( //Visitor IC Number
-                labelText = "IC Number",
+                labelText = stringResource(R.string.ic_number_field),
                 textValue = vm.ic,
                 isSingleLine = true,
                 onValueChangeFun = {
@@ -84,13 +84,11 @@ fun VisitorRegistration(
                     }
                 },
                 errorState = icError,
-                errorMsg = "Required Field!",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.padding(top = 4.dp)
             )
 
             CustomOutlinedTextField( //Visitor Car Number
-                labelText = "Car Number",
+                labelText = stringResource(R.string.car_number_field),
                 textValue = vm.carNumber,
                 isSingleLine = true,
                 onValueChangeFun = {
@@ -101,13 +99,13 @@ fun VisitorRegistration(
                 },
                 errorState = carError,
                 errorMsg = "Required Field!",
-                modifier = Modifier.padding(top = 4.dp)
+//                modifier = Modifier.padding(top = 4.dp)
             )
 
 
             CustomOutlinedTextField(
                 //Visitor Visitation Date
-                labelText = "Visitation Date",
+                labelText = stringResource(R.string.visit_date),
                 textValue = vm.visitDate.value,
                 onValueChangeFun = {
                     vm.visitDate.value = it
@@ -126,13 +124,11 @@ fun VisitorRegistration(
                         vm.visitDate
                     )
                 },
-                errorState = dateError,
-                errorMsg = "Required Field!",
-                modifier = Modifier.padding(top = 4.dp),
+                errorState = dateError
             )
 
             CustomOutlinedTextField( //Visitor Expected Entry Time
-                labelText = "Entry Time",
+                labelText = stringResource(R.string.entry_time_field),
                 textValue = vm.expectedEntryTime.value,
                 onValueChangeFun = {
                     vm.expectedEntryTime.value = it
@@ -146,14 +142,12 @@ fun VisitorRegistration(
                     CustomTimePicker(LocalContext.current, 8, 30, vm.expectedEntryTime)
                 },
                 errorState = timeError,
-                errorMsg = "Required Field!",
-                modifier = Modifier.padding(top = 4.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             CustomButtonLoader(
-                btnText = "Register Visitor",
+                btnText = stringResource(R.string.register_visitor_btn),
                 modifier = Modifier
                     .padding(bottom = 24.dp)
                     .width(300.dp), onClickFun = {
@@ -208,10 +202,10 @@ fun VisitorRegistration(
                         }
 
 
-                        data = vm.visitorRegistration()
+                       data = vm.visitorRegistration()
 
                         if (data != null) {
-                            bitmap = vm.generateQr()
+                            bitmap = vm.generateQr(data!!)
 
                             displayVisitor = true
                         } else {

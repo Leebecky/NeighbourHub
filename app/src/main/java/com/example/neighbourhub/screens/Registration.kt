@@ -4,13 +4,15 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -26,6 +28,7 @@ import com.example.neighbourhub.viewmodel.RegistrationViewModel
 import kotlinx.coroutines.launch
 
 // Registration Page
+@ExperimentalComposeUiApi
 @Composable
 fun Registration(
     navBack: () -> Unit,
@@ -47,7 +50,7 @@ fun Registration(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            CustomTopAppBar_Back("Register", navBack = navBack)
+            CustomTopAppBar_Back(stringResource(R.string.registration_title), navBack = navBack)
         }
     ) { padding ->
         Column(
@@ -66,7 +69,7 @@ fun Registration(
             )
             Spacer(Modifier.height(50.dp))
             CustomOutlinedTextField( // Email
-                labelText = "Email",
+                labelText = stringResource(id = R.string.email_field),
                 textValue = vm.email,
                 onValueChangeFun = {
                     vm.email = it
@@ -76,13 +79,12 @@ fun Registration(
                 },
                 modifier = Modifier.padding(top = 8.dp),
                 isSingleLine = true,
-                errorState = emailError,
-                errorMsg = "Required Field!"
+                errorState = emailError
             )
             CustomOutlinedTextField( // Password
                 textValue = vm.password,
                 modifier = Modifier.padding(top = 8.dp),
-                labelText = "Password",
+                labelText = stringResource(id = R.string.password_field),
                 onValueChangeFun = {
                     vm.password = it
                     if (passwordError) {
@@ -102,8 +104,8 @@ fun Registration(
                 errorMsg = passwordMsg
             )
             Spacer(Modifier.height(30.dp))
-            CustomButtonLoader(//TODO: Validation
-                btnText = "Register",
+            CustomButtonLoader(
+                btnText = stringResource(R.string.register_btn),
                 showLoader = isLoading,
                 onClickFun = {
                     scope.launch {
@@ -157,7 +159,7 @@ fun Registration(
                             navHome()
                         } else {
                             showRegistrationError = true
-                            Log.println(Log.INFO, "Test", "Registration Failed")
+                            Log.println(Log.INFO, "NeighbourHub", "Registration Failed")
                         }
 
                         isLoading = false
@@ -168,8 +170,8 @@ fun Registration(
 
             if (showRegistrationError) { // Registration Dialog
                 CustomDialogClose(
-                    alertTitle = "Registration Failed",
-                    alertBody = "Error registering user. Please try again",
+                    alertTitle = stringResource(R.string.registration_error_header),
+                    alertBody = stringResource(R.string.registration_error_desc),
                     onDismissFun = { showRegistrationError = false },
                     btnCloseClick = { showRegistrationError = false })
             }

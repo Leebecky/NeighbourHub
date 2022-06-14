@@ -1,7 +1,6 @@
 package com.example.neighbourhub.viewmodel
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -49,6 +48,7 @@ class VisitorRegistrationViewModel : ViewModel() {
             addressVisited = currentUser.value.address,
             createdBy = currentUser.value.id,
             raId = currentUser.value.residentsAssociationId,
+            entryTime = expectedEntryTime.value
         )
 
         val result = Visitor.updateVisitor(data)
@@ -59,27 +59,13 @@ class VisitorRegistrationViewModel : ViewModel() {
         return null
     }
 
-    fun generateQr(): Bitmap? {
-        //TODO: QR Code generation
+    fun generateQr(data: Visitor): Bitmap? {
+
         //Reference:https://stackoverflow.com/questions/64443791/android-qr-generator-api
-        val content = Visitor(id = "123", name = "myName").toString()
-        Log.println(Log.INFO, "NeighbourHub", content.toString())
+
         // Initializing the QR Encoder with your value to be encoded, type you required and Dimension
         val barcodeEncoder = BarcodeEncoder()
-        val bitmap = barcodeEncoder.encodeBitmap(content, BarcodeFormat.QR_CODE, 512, 512)
+        return barcodeEncoder.encodeBitmap(data.toString(), BarcodeFormat.QR_CODE, 512, 512)
 
-        return bitmap
-
-//        val qrgEncoder = QRGEncoder(inputValue, null, QRGContents.Type.TEXT, smallerDimension)
-//        qrgEncoder.setColorBlack(Color.RED)
-//        qrgEncoder.setColorWhite(Color.BLUE)
-//        try {
-//            // Getting QR-Code as Bitmap
-//            bitmap = qrgEncoder.getBitmap()
-//            // Setting Bitmap to ImageView
-//            qrImage.setImageBitmap(bitmap)
-//        } catch (e: WriterException) {
-//            Log.v(TAG, e.toString())
-//        }
     }
 }

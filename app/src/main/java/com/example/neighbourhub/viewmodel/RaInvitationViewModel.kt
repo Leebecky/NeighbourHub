@@ -3,14 +3,11 @@ package com.example.neighbourhub.viewmodel
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.neighbourhub.models.ResidentAssociation
 import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.utils.Constants
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.*
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class RaInvitationViewModel() : ViewModel() {
@@ -30,8 +27,8 @@ class RaInvitationViewModel() : ViewModel() {
                 user.address.residentialArea = ra.address.residentialArea
                 Users.updateUserProfile(user)
                 true
-            } else { //TODO: Error management
-                Log.println(Log.INFO, "Test", "Login error")
+            } else { 
+                Log.println(Log.INFO, "NeighbourHub", "Login error")
                 false
             }
         } else {

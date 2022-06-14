@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Users
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
@@ -31,7 +33,8 @@ import com.example.neighbourhub.viewmodel.PhonebookViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalFoundationApi::class)
+
+@ExperimentalFoundationApi
 @Composable
 fun Phonebook(navBack: () -> Unit, vm: PhonebookViewModel = viewModel()) {
     // State Variables
@@ -43,7 +46,7 @@ fun Phonebook(navBack: () -> Unit, vm: PhonebookViewModel = viewModel()) {
     // Page
     Scaffold(
         topBar = {
-            CustomTopAppBar_Back(title = "Phonebook", navBack = { navBack() })
+            CustomTopAppBar_Back(title = stringResource(R.string.phonebook_title), navBack = { navBack() })
         }
     ) { padding ->
         SwipeRefresh(

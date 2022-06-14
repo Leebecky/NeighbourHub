@@ -10,14 +10,18 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Visitor
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.ui.widgets.CustomTextButton
 
+@ExperimentalComposeUiApi
 @Composable
 fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
 
@@ -43,7 +47,7 @@ fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
             }
 
             CustomOutlinedTextField( //Visitor Name
-                labelText = "Name",
+                labelText = stringResource(R.string.name_field),
                 textValue = data.name,
                 isReadOnly = true,
                 onValueChangeFun = {},
@@ -51,7 +55,7 @@ fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
             )
 
             CustomOutlinedTextField( //Visitor IC Number
-                labelText = "IC Number",
+                labelText = stringResource(R.string.ic_number_field),
                 textValue = data.icNumber,
                 isReadOnly = true,
                 onValueChangeFun = {},
@@ -59,7 +63,7 @@ fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
             )
 
             CustomOutlinedTextField( //Visitor Car Number
-                labelText = "Car Number",
+                labelText = stringResource(R.string.car_number_field),
                 textValue = data.carNumber,
                 isReadOnly = true,
                 onValueChangeFun = {},
@@ -69,7 +73,7 @@ fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
 
             CustomOutlinedTextField(
                 //Visitor Visitation Date
-                labelText = "Visitation Date",
+                labelText = stringResource(R.string.visit_date),
                 textValue = data.visitDate,
                 isReadOnly = true,
                 onValueChangeFun = {},
@@ -77,7 +81,7 @@ fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
             )
 
             CustomOutlinedTextField( //Visitor Expected Entry Time
-                labelText = "Entry Time",
+                labelText = stringResource(R.string.entry_time_field),
                 textValue = data.expectedEntryTime,
                 isReadOnly = true,
                 onValueChangeFun = {},
@@ -85,13 +89,13 @@ fun VisitorRegistered(navHome: () -> Unit, data: Visitor, qrCode: Bitmap?) {
             )
 
             Text(
-                text = "Show this QR Code at the guardhouse to skip registration",
+                text = stringResource(R.string.visitor_prereg_qr_instruction),
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 4.dp, horizontal = 12.dp)
             )
             Text(
-                text = "- This page will not be displayed again! -",
+                text = "-\nThis page will not be displayed again!\n-",
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 4.dp, horizontal = 12.dp)

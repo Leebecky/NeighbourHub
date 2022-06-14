@@ -3,12 +3,13 @@ package com.example.neighbourhub
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,17 +29,20 @@ import com.example.neighbourhub.screens.setup.UserWelcome
 import com.example.neighbourhub.ui.theme.NeighbourHubTheme
 import com.example.neighbourhub.utils.NavigationRoutes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
+
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
 @ExperimentalPermissionsApi
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             NeighbourHubTheme(darkTheme = false) {
-
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -51,8 +55,20 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+//
+//    override fun onBackPressed() {
+//        if (pressedTime + 2000 > System.currentTimeMillis()) {
+//            super.onBackPressed()
+//            finish()
+//        } else {
+//            Toast.makeText(this.baseContext, "Press back again to exit", Toast.LENGTH_SHORT).show()
+//        }
+//        pressedTime = System.currentTimeMillis()
+//    }
 }
 
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
 @ExperimentalPermissionsApi
 @Composable
 fun NavigationController(currentUser: FirebaseUser?) {
@@ -73,9 +89,10 @@ fun NavigationController(currentUser: FirebaseUser?) {
                 navRegistration = { navController.navigate(NavigationRoutes.Registration) },
                 navHome = {
                     navController.navigate(NavigationRoutes.Home) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
-                        }
+                        navController.backQueue.clear()
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            inclusive = true
+//                        }
                     }
                 })
         }
@@ -94,16 +111,18 @@ fun NavigationController(currentUser: FirebaseUser?) {
             Home(
                 navHome = { //Return to Home page
                     navController.navigate(NavigationRoutes.Home) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
-                        }
+                        navController.backQueue.clear()
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            inclusive = true
+//                        }
                     }
                 },
                 navOut = { //Logout
                     navController.navigate(NavigationRoutes.Login) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
-                        }
+                        navController.backQueue.clear()
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            inclusive = true
+//                        }
                     }
                 },
                 //Bulletin board navi
@@ -137,9 +156,10 @@ fun NavigationController(currentUser: FirebaseUser?) {
             UserProfile(navBack = { navController.navigateUp() },
                 navHome = {
                     navController.navigate(NavigationRoutes.Home) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
-                        }
+                        navController.backQueue.clear()
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            inclusive = true
+//                        }
                     }
                 }
             )
@@ -193,9 +213,10 @@ fun NavigationController(currentUser: FirebaseUser?) {
                 navBack = { navController.navigateUp() },
                 navHome = {
                     navController.navigate(NavigationRoutes.Home) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
-                        }
+                        navController.backQueue.clear()
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            inclusive = true
+//                        }
                     }
                 })
         }
@@ -221,9 +242,10 @@ fun NavigationController(currentUser: FirebaseUser?) {
         // Logout Route
         composable(route = NavigationRoutes.LogoutRoute) {
             navController.navigate(NavigationRoutes.Login) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
-                }
+                navController.backQueue.clear()
+//                popUpTo(navController.graph.findStartDestination().id) {
+//                    inclusive = true
+//                }
             }
         }
 

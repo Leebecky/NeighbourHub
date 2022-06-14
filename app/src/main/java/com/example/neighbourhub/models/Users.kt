@@ -11,7 +11,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
-import java.lang.Exception
 
 @Parcelize
 data class Users(
@@ -41,7 +40,7 @@ data class Users(
                 val currentUser: Users? = data.toObject<Users>()
                 return currentUser
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 return null
             }
         }
@@ -52,7 +51,7 @@ data class Users(
                 firestore.document(data.id).set(data).await()
                 true
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 false
             }
         }
@@ -71,7 +70,7 @@ data class Users(
 
                 updateUserProfile(data)
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
             }
         }
     }

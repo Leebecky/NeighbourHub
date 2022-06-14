@@ -10,14 +10,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Visitor
 import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
 import com.example.neighbourhub.viewmodel.VisitorLogViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import org.intellij.lang.annotations.JdkConstants
 
 @Composable
 fun VisitorLog(navBack: () -> Unit, vm: VisitorLogViewModel = viewModel()) {
@@ -27,7 +28,7 @@ fun VisitorLog(navBack: () -> Unit, vm: VisitorLogViewModel = viewModel()) {
     val visitorLog by vm.visitorLog.collectAsState()
 
     Scaffold(
-        topBar = { CustomTopAppBar_Back(title = "Visitor Log", navBack = navBack) }
+        topBar = { CustomTopAppBar_Back(title = stringResource(R.string.visitor_log_title), navBack = navBack) }
     ) { padding ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing),
@@ -81,7 +82,7 @@ fun VisitorItem(data: Visitor) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "IC",
+                    text = stringResource(R.string.ic_field),
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.weight(0.3f)
                 )
@@ -94,7 +95,7 @@ fun VisitorItem(data: Visitor) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Car",
+                    text = stringResource(R.string.car_display),
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.weight(0.3f)
                 )
@@ -107,7 +108,7 @@ fun VisitorItem(data: Visitor) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Visiting",
+                    text = stringResource(R.string.visiting),
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.weight(0.3f)
                 )

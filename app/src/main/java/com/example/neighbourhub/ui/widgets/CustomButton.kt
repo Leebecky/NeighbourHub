@@ -1,12 +1,10 @@
 package com.example.neighbourhub.ui.widgets
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -99,5 +97,8 @@ fun CustomButtonLoader(
 @Preview(showBackground = true)
 @Composable
 fun CustomButtonPreview() {
-    CustomButton("Test", {})
+    Column {
+        CustomButtonLoader("Test", {}, showLoader = false)
+        CustomButtonLoader("Test", {}, showLoader = true)
+    }
 }

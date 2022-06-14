@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.neighbourhub.R
 import kotlinx.coroutines.delay
 // Reference https://www.geeksforgeeks.org/animated-splash-screen-in-android-using-jetpack-compose/
@@ -35,9 +34,7 @@ fun SplashScreen(navController: NavController, startUpRoute: String) {
         )
         delay(3000L)
         navController.navigate(startUpRoute) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                inclusive = true
-            }
+           navController.backQueue.clear()
         }
 
     }
