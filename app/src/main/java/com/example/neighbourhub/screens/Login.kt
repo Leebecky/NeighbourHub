@@ -1,16 +1,19 @@
 package com.example.neighbourhub.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -22,13 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.neighbourhub.R
 import com.example.neighbourhub.models.Users
-import com.example.neighbourhub.ui.widgets.CustomButton
 import com.example.neighbourhub.ui.widgets.CustomButtonLoader
 import com.example.neighbourhub.ui.widgets.CustomDialogClose
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome: () -> Unit) {
     var showPassword by remember { mutableStateOf(false) }
@@ -38,6 +41,7 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
@@ -50,18 +54,16 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
         )
         Spacer(Modifier.height(50.dp))
         CustomOutlinedTextField(
-            labelText = "Email",
+            labelText = stringResource(R.string.email_field),
             textValue = vm.email,
             onValueChangeFun = { vm.email = it },
-            modifier = Modifier.padding(top = 8.dp),
             isSingleLine = true,
         )
-        OutlinedTextField(
-            value = vm.password,
-            modifier = Modifier.padding(top = 8.dp),
-            label = { Text("Password") },
-            onValueChange = { vm.password = it },
-            singleLine = true,
+        CustomOutlinedTextField(
+            textValue = vm.password,
+            labelText = stringResource(R.string.password_field),
+            onValueChangeFun = { vm.password = it },
+            isSingleLine = true,
             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = { // Show/Hide Password icon
                 IconButton(onClick = { showPassword = !showPassword }) {
@@ -94,7 +96,7 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = "No account? Click here to register!",
+            text = stringResource(R.string.registration_hyperlink),
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .padding(bottom = 24.dp)
@@ -104,8 +106,8 @@ fun Login(vm: LoginViewModel = viewModel(), navRegistration: () -> Unit, navHome
 
         if (showLoginError) { //Login Error Dialog
             CustomDialogClose(
-                alertTitle = "Authentication Error",
-                alertBody = "Failed to login. Please try again",
+                alertTitle = stringResource(R.string.login_error_header),
+                alertBody = stringResource(R.string.login_error_desc),
                 onDismissFun = { showLoginError = false },
                 btnCloseClick = { showLoginError = false })
         }

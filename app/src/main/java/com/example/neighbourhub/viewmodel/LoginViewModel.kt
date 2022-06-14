@@ -11,8 +11,8 @@ import kotlinx.coroutines.tasks.await
 
 class LoginViewModel() : ViewModel() {
     // Variables
-    var email by mutableStateOf("committee@gmail.com")
-    var password by mutableStateOf("committee")
+    var email by mutableStateOf("")
+    var password by mutableStateOf("")
 
     suspend fun logInWithEmail(): AuthResult? {
         return try {

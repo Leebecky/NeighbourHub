@@ -12,9 +12,11 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
@@ -30,6 +32,7 @@ import kotlinx.coroutines.launch
 
 //Reference: https://www.goodrequest.com/blog/jetpack-compose-basics-showing-images
 
+@ExperimentalComposeUiApi
 @ExperimentalPermissionsApi
 @Composable
 fun BulletinCreation(
@@ -77,7 +80,7 @@ fun BulletinCreation(
     // Content
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { CustomTopAppBar_Back(title = "Bulletin Details", navBack = navBack) },
+        topBar = { CustomTopAppBar_Back(title = stringResource(R.string.bulletin_creation_title), navBack = navBack) },
         modifier = Modifier.fillMaxSize()
     ) { padding ->
         Column(
@@ -120,7 +123,7 @@ fun BulletinCreation(
             if (editable) {
                 // Click to Remove Image
                 CustomButton(
-                    btnText = "Remove Image",
+                    btnText = stringResource(R.string.remove_img_btn),
                     btnColor = Color.Red,
                     onClickFun = { vm.url = "" },
                     modifier = Modifier
@@ -130,7 +133,7 @@ fun BulletinCreation(
             }
 
             CustomOutlinedTextField( //Title
-                labelText = "Title",
+                labelText = stringResource(R.string.title_field),
                 textValue = vm.title,
                 onValueChangeFun = {
                     vm.title = it
@@ -140,13 +143,12 @@ fun BulletinCreation(
                 },
                 isSingleLine = true,
                 isEnabled = editable,
-                errorState = titleError,
-                errorMsg = "Required field!"
+                errorState = titleError
             )
 
             CustomOutlinedTextField(
                 //Description
-                labelText = "Description",
+                labelText = stringResource(R.string.desc_field),
                 textValue = vm.desc,
                 maxLines = 3,
                 onValueChangeFun = {
@@ -233,13 +235,15 @@ fun BulletinCreation(
                     })
 
                 //Delete Button
-                CustomButtonLoader(
-                    btnText = "Delete",
-                    onClickFun = { showDeleteDialog = true },
-                    showLoader = isDeleteLoading,
-                    btnColor = Color.Red,
-                    modifier = Modifier.height(40.dp)
-                )
+                if (vm.id != "-1") {
+                    CustomButtonLoader(
+                        btnText = "Delete",
+                        onClickFun = { showDeleteDialog = true },
+                        showLoader = isDeleteLoading,
+                        btnColor = Color.Red,
+                        modifier = Modifier.height(40.dp)
+                    )
+                }
             }
 
             // DELETE ALERT DIALOG

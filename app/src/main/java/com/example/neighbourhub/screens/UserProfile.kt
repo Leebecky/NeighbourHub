@@ -1,6 +1,9 @@
 package com.example.neighbourhub.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -10,17 +13,20 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.neighbourhub.models.Users
+import com.example.neighbourhub.R
 import com.example.neighbourhub.ui.widgets.CustomButtonLoader
 import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.ui.widgets.CustomTopAppBar_Back
 import com.example.neighbourhub.viewmodel.UserProfileViewModel
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun UserProfile(
     vm: UserProfileViewModel = viewModel(),
@@ -43,7 +49,7 @@ fun UserProfile(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            CustomTopAppBar_Back(title = "User Profile", navBack = navBack)
+            CustomTopAppBar_Back(title = stringResource(R.string.user_profile_title), navBack = navBack)
         }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -54,12 +60,12 @@ fun UserProfile(
                 .verticalScroll(scroll)
         ) {
             Text(
-                text = "User Details",
+                text = stringResource(R.string.user_details),
                 modifier = Modifier
                     .padding(top = 25.dp)
             )
             CustomOutlinedTextField( // Name
-                labelText = "Full Name",
+                labelText = stringResource(R.string.user_name_full_field),
                 textValue = vm.name,
                 onValueChangeFun = {
                     vm.name = it
@@ -72,7 +78,7 @@ fun UserProfile(
             )
 
             CustomOutlinedTextField( // Age
-                labelText = "Age",
+                labelText = stringResource(R.string.age_field),
                 textValue = vm.age,
                 onValueChangeFun = {
                     vm.age = it
@@ -87,7 +93,7 @@ fun UserProfile(
             )
 
             CustomOutlinedTextField( // Contact Number
-                labelText = "Contact Number",
+                labelText = stringResource(R.string.contact_field),
                 textValue = vm.contactNumber,
                 onValueChangeFun = {
                     vm.contactNumber = it
@@ -102,14 +108,14 @@ fun UserProfile(
 
             // Address
             Text(
-                text = "Address",
+                text = stringResource(R.string.address),
                 modifier = Modifier
                     .padding(top = 25.dp)
             )
 
             CustomOutlinedTextField(
                 // House Number
-                labelText = "House Number",
+                labelText = stringResource(R.string.house_number_field),
                 textValue = vm.houseNo,
                 onValueChangeFun = {
                     vm.houseNo = it
@@ -124,7 +130,7 @@ fun UserProfile(
 
             CustomOutlinedTextField(
                 // Street Name
-                labelText = "Street Name",
+                labelText = stringResource(R.string.street_field),
                 textValue = vm.street,
                 onValueChangeFun = {
                     vm.street = it
@@ -137,25 +143,25 @@ fun UserProfile(
             )
 
             CustomOutlinedTextField( // Residential Area
-                labelText = "Residential Area",
+                labelText = stringResource(R.string.residential_area_field),
                 textValue = vm.residentialArea,
                 onValueChangeFun = { }, isEnabled = false
             )
 
             CustomOutlinedTextField( // Postcode
-                labelText = "Postcode",
+                labelText = stringResource(R.string.postcode_field),
                 textValue = vm.postcode,
                 onValueChangeFun = { }, isEnabled = false
             )
 
             CustomOutlinedTextField( // State
-                labelText = "State",
+                labelText = stringResource(R.string.state_field),
                 textValue = vm.state,
                 onValueChangeFun = { }, isEnabled = false
             )
 
             CustomButtonLoader(
-                btnText = "Save",
+                btnText = stringResource(R.string.save_btn),
                 onClickFun = {
                     scope.launch {
                         loaderState = true

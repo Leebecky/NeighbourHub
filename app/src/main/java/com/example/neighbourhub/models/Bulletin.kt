@@ -35,7 +35,7 @@ data class Bulletin(
                     emptyList()
                 }
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 emptyList()
             }
         }
@@ -52,7 +52,7 @@ data class Bulletin(
                 }
 
             } catch (ex: Exception) {
-                Log.println(Log.INFO, "Test", ex.message.orEmpty())
+                Log.println(Log.INFO, "NeighbourHub", ex.message.orEmpty())
                 Bulletin()
             }
         }

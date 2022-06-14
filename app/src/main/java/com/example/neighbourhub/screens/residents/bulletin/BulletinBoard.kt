@@ -36,7 +36,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 fun BulletinBoard(
     padding: PaddingValues,
     navCreation: (id: String) -> Unit,
-//    onSelectBulletin: (id: String) -> Unit = { Log.println(Log.INFO, "Test", it)},
     vm: BulletinBoardViewModel = viewModel()
 ) {
 
@@ -141,8 +140,5 @@ fun BulletinBoardPreview() {
                 imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZkCMrHiaOmWdLc0YFx9dThod_LDTO9RIMyw&usqp=CAU"
             ), {}
         )
-//        Surface {
-//            BulletinBoard({}, BulletinBoardViewModel())
-//        }
     }
 }

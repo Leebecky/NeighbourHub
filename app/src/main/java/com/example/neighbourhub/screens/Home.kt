@@ -1,16 +1,25 @@
 package com.example.neighbourhub.screens
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.neighbourhub.R
 import com.example.neighbourhub.screens.residents.Menu
 import com.example.neighbourhub.screens.residents.VisitorRegistration
 import com.example.neighbourhub.screens.residents.bulletin.BulletinBoard
 import com.example.neighbourhub.utils.NavigationRoutes
 import com.example.neighbourhub.viewmodel.HomeViewModel
 
+private var backPressedTime: Long = 0
+
+@ExperimentalComposeUiApi
 @Composable
 fun Home(
     navHome: () -> Unit,
@@ -21,15 +30,26 @@ fun Home(
 ) {
     var currentRoute by rememberSaveable { mutableStateOf(NavigationRoutes.Bulletin) }
     val currentUser = vm.currentUser.collectAsState()
-    val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+    var backPressedTime: Long = 0
+    var backInterceptor by rememberSaveable { mutableStateOf(true) }
 
-//    if (currentUser.value.status == Constants.PendingStatus) {
-//        navController.navigate(NavigationRoutes.UserProfile)
-//    }
+
+    BackHandler(enabled = backInterceptor, onBack = {
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            Toast.makeText(context, "Tap Back once (1) to exit.", Toast.LENGTH_SHORT).show()
+            backInterceptor = false
+            return@BackHandler
+        } else {
+            Toast.makeText(context, "Tap Back twice (2) to exit.", Toast.LENGTH_SHORT).show()
+            backInterceptor = true
+        }
+        backPressedTime = System.currentTimeMillis()
+    })
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(text = "NeighbourHub") })
+            TopAppBar(title = { Text(text = stringResource(R.string.app_name)) })
         },
         bottomBar = {
 
@@ -59,8 +79,7 @@ fun Home(
 //                NavigationRoutes.Marketplace -> Marketplace()
                 NavigationRoutes.VisitorRegRoute -> VisitorRegistration(
                     padding = padding,
-                    navHome = navHome,
-                    scaffoldState = scaffoldState
+                    navHome = navHome
                 )
                 NavigationRoutes.Bulletin -> BulletinBoard(
                     padding = padding,
@@ -76,7 +95,6 @@ fun Home(
         })
 
 }
-
 
 //@Preview(showBackground = true)
 //@Preview(

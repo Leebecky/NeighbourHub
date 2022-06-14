@@ -74,7 +74,7 @@ class BulletinCreationViewModel(
         return uploadImageCommon(filePath, fileName)
     }
 
-    suspend fun deleteBulletin(id:String):Boolean {
+    suspend fun deleteBulletin(id: String): Boolean {
         return Bulletin.deleteBulletin(id)
     }
 }

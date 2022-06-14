@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -23,6 +24,7 @@ import com.example.neighbourhub.ui.widgets.CustomOutlinedTextField
 import com.example.neighbourhub.viewmodel.RaInvitationViewModel
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun RaInvitation(
     navProfile: () -> Unit,
